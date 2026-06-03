@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" />
-<title>KCST Code Bank | Smart Combo Filter</title>
+<title>KCST Code Bank</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   * {
@@ -144,7 +144,7 @@
 
   /* main container */
   .main-container {
-    max-width: 1260px;
+    max-width: 1400px;
     margin: 20px auto;
     padding: 0 18px;
   }
@@ -195,10 +195,6 @@
     box-shadow: 0 6px 12px rgba(27, 75, 160, 0.2);
   }
 
-  .btn-modern i {
-    font-size: 15px;
-  }
-
   .btn-modern:active {
     transform: scale(0.97);
   }
@@ -212,16 +208,17 @@
     background: var(--gradient-refresh);
   }
 
-  /* =========== COMBOBOX STYLES (replaces chips) ========== */
+  /* =========== COMBOBOX STYLES ========== */
   .filter-combo-container {
-    margin-bottom: 22px;
+    margin-bottom: 28px;
     position: relative;
     width: 100%;
   }
 
   .combo-select {
     width: 100%;
-    padding: 14px 18px;
+    max-width: 340px;
+    padding: 14px 20px;
     border-radius: 60px;
     background: white;
     border: 1px solid #e2edf7;
@@ -244,7 +241,6 @@
     box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.2);
   }
 
-  /* custom badge to show active filter */
   .active-filter-badge {
     display: inline-flex;
     align-items: center;
@@ -258,11 +254,12 @@
     margin-top: 12px;
   }
 
-  /* cards container (mobile first card layout) */
+  /* ============== GRID LAYOUT (DESKTOP & RESPONSIVE) ============= */
   .codes-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    transition: all 0.2s;
   }
 
   .code-card {
@@ -270,20 +267,26 @@
     border-radius: 28px;
     box-shadow: var(--card-shadow);
     padding: 20px;
-    transition: all 0.25s;
+    transition: all 0.25s ease;
     border: 1px solid rgba(255, 255, 255, 0.8);
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(2px);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 
-  .code-card:active {
-    transform: scale(0.99);
+  .code-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--hover-shadow);
+    border-color: rgba(44, 123, 229, 0.3);
   }
 
   .card-header-row {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
     margin-bottom: 14px;
     gap: 8px;
@@ -296,6 +299,9 @@
     font-size: 12px;
     font-weight: 700;
     color: var(--blue);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
 
   .lang-tag {
@@ -310,24 +316,25 @@
   }
 
   .description-text {
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     margin: 12px 0 8px;
     color: #0c2b4b;
     word-break: break-word;
+    line-height: 1.3;
   }
 
   .code-preview-mobile {
     background: #f1f5f9;
     padding: 12px;
-    border-radius: 18px;
+    border-radius: 20px;
     font-family: 'SF Mono', 'JetBrains Mono', monospace;
     font-size: 11px;
     line-height: 1.4;
     color: #1e293b;
     white-space: pre-wrap;
     word-break: break-all;
-    max-height: 80px;
+    max-height: 90px;
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 12px 0;
@@ -336,18 +343,19 @@
 
   .card-actions {
     display: flex;
-    gap: 12px;
-    margin-top: 12px;
+    gap: 10px;
+    margin-top: 16px;
     justify-content: flex-end;
+    flex-wrap: wrap;
   }
 
   .icon-btn {
     background: #f0f4fa;
     border: none;
-    padding: 10px 16px;
+    padding: 8px 14px;
     border-radius: 40px;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 12px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -356,7 +364,7 @@
   }
 
   .icon-btn i {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .btn-view {
@@ -390,9 +398,9 @@
   .modal-card {
     background: white;
     width: 100%;
-    max-width: 560px;
+    max-width: 580px;
     border-radius: 40px;
-    padding: 24px 22px;
+    padding: 28px 26px;
     box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s;
   }
@@ -439,6 +447,7 @@
     background: #ffffffc9;
     border-radius: 48px;
     color: #59748f;
+    grid-column: 1 / -1;
   }
 
   .toast-message {
@@ -465,14 +474,30 @@
     transform: translateX(-50%) translateY(0);
   }
 
-  /* small adjustments */
-  @media (max-width: 520px) {
+  @media (max-width: 680px) {
+    .codes-grid {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .combo-select {
+      max-width: 100%;
+    }
     .btn-modern {
       padding: 8px 18px;
       font-size: 13px;
     }
     .modal-card {
       padding: 20px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .codes-grid {
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 28px;
+    }
+    .code-card {
+      padding: 24px;
     }
   }
 </style>
@@ -497,25 +522,26 @@
 <div class="main-container">
   <div class="action-panel">
     <div class="greeting">
-      <i class="fas fa-code"></i> 
-      <span>KCST Multimedia · 96_333_151_77</span>
+      <span><h1>Golden Wings Student Association - 2026 (ARD)</h1></span>
     </div>
     <div class="btn-group">
       <button class="btn-modern btn-add" id="openAddBtnMobile"><i class="fas fa-plus-circle"></i> Add Code</button>
-      <button class="btn-modern btn-refresh" id="refreshListBtn"><i class="fas fa-sync-alt"></i> Sync</button>
+      <button class="btn-modern btn-refresh" id="refreshListBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
     </div>
   </div>
 
-  <!-- ========== COMBO BOX FILTER (replaces chips) ========= -->
+  <!-- COMBO BOX FILTER (Language dropdown) -->
   <div class="filter-combo-container">
     <select id="languageComboFilter" class="combo-select">
-      <option value="all">📚 All Languages (show everything)</option>
+      <option value="all">📚 All Languages</option>
       <option value="Excel">📊 Excel</option>
+      <option value="Tally">📒 Tally</option>
+      <option value="Zoho Book">📒 Zoho Book</option>
       <option value="VB6">⚙️ VB6</option>
       <option value="HTML">🌐 HTML</option>
       <option value="JavaScript">🟨 JavaScript</option>
       <option value="SQL">🗄️ SQL</option>
-      <option value="Tally">📒 Tally</option>
+
       <option value="MS Word">📄 MS Word</option>
       <option value="Other">🎲 Other</option>
     </select>
@@ -540,7 +566,7 @@
     <input type="text" id="addDescription" class="input-field" placeholder="Short description (e.g. VLOOKUP formula)">
     <select id="addLanguageSelect" class="modal-select">
       <option>Excel</option><option>VB6</option><option>HTML</option><option>JavaScript</option>
-      <option>SQL</option><option>Tally</option><option>MS Word</option><option>Other</option>
+      <option>SQL</option><option>Tally</option><option>Zoho Book</option><option>MS Word</option><option>Other</option>
     </select>
     <textarea id="addCodeArea" placeholder="Paste your code here..."></textarea>
     <div class="modal-actions">
@@ -553,7 +579,7 @@
 <!-- PASSWORD MODAL -->
 <div id="passwordModal" class="modal-glass">
   <div class="modal-card">
-    <h3><i class="fas fa-lock"></i> Admin access</h3>
+    <h3><i class="fas fa-lock"></i> Enter Admin Password</h3>
     <input type="password" id="passwordInput" class="input-field" placeholder="Enter master password">
     <label style="display: flex; gap: 10px; align-items: center; margin: 12px 0;">
       <input type="checkbox" id="sessionCheckbox"> <span style="font-size: 14px;">Keep session unlocked</span>
@@ -584,7 +610,7 @@
 
 <!-- VIEW/COPY POPUP -->
 <div id="viewPopup" class="modal-glass">
-  <div class="modal-card" style="max-width: 620px;">
+  <div class="modal-card" style="max-width: 680px;">
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <div><strong id="popupTitle">Code Snippet</strong></div>
       <button id="closeViewPopup" style="background: none; border: none; font-size: 28px; cursor: pointer;">&times;</button>
@@ -617,7 +643,7 @@
   const q = query(codesRef, orderBy("createdAt", "desc"));
 
   // state
-  let allSnippets = []; // { id, description, code, language }
+  let allSnippets = []; 
   let currentFilterLang = "all";
   let searchTerm = "";
   let sessionUnlocked = sessionStorage.getItem("kcst_edit_unlocked") === "1";
@@ -660,7 +686,6 @@
   
   const toastDiv = document.getElementById("globalToast");
   
-  // COMBO BOX elements
   const languageCombo = document.getElementById("languageComboFilter");
   const filterStatusDiv = document.getElementById("filterStatus");
   const filterLabelSpan = document.getElementById("filterLabel");
@@ -671,7 +696,6 @@
     setTimeout(() => toastDiv.classList.remove("show"), 2800);
   }
 
-  // update filter badge visibility
   function updateFilterBadge() {
     if (currentFilterLang === "all") {
       filterStatusDiv.style.display = "none";
@@ -679,18 +703,18 @@
       filterStatusDiv.style.display = "inline-flex";
       let displayName = currentFilterLang;
       if (currentFilterLang === "Excel") displayName = "📊 Excel";
+      else if (currentFilterLang === "Tally") displayName = "📒 Tally";
       else if (currentFilterLang === "VB6") displayName = "⚙️ VB6";
       else if (currentFilterLang === "HTML") displayName = "🌐 HTML";
       else if (currentFilterLang === "JavaScript") displayName = "🟨 JavaScript";
       else if (currentFilterLang === "SQL") displayName = "🗄️ SQL";
-      else if (currentFilterLang === "Tally") displayName = "📒 Tally";
       else if (currentFilterLang === "MS Word") displayName = "📄 MS Word";
       else if (currentFilterLang === "Other") displayName = "🎲 Other";
       filterLabelSpan.innerText = displayName;
     }
   }
 
-  // render cards with filter & search (combo version)
+  // render cards with filter & search
   function renderCards() {
     let filtered = [...allSnippets];
     if (currentFilterLang !== "all") {
@@ -721,7 +745,7 @@
       else if (lang.toLowerCase().includes("tally")) langColor = "var(--lang-tally)";
       else if (lang.toLowerCase().includes("word")) langColor = "var(--lang-word)";
       
-      const previewCode = (item.code || "").replace(/\n/g, " ").substring(0, 100) + ((item.code || "").length > 100 ? "…" : "");
+      const previewCode = (item.code || "").replace(/\n/g, " ").substring(0, 110) + ((item.code || "").length > 110 ? "…" : "");
       html += `
         <div class="code-card" data-id="${item.id}" data-lang="${lang}">
           <div class="card-header-row">
@@ -740,7 +764,6 @@
     });
     container.innerHTML = html;
     
-    // attach dynamic event listeners
     document.querySelectorAll(".view-action").forEach(btn => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -851,7 +874,6 @@
   });
   cancelEdit.addEventListener("click", () => { editModal.style.display = "none"; pendingEditId = null; });
 
-  // Add snippet
   confirmAdd.addEventListener("click", async () => {
     const desc = addDesc.value.trim();
     const code = addCode.value;
@@ -867,9 +889,30 @@
   openAddBtn.addEventListener("click", () => { addModal.style.display = "flex"; });
   closeAdd.addEventListener("click", () => { addModal.style.display = "none"; });
   
-  refreshBtn.addEventListener("click", () => { showToast("Refreshing list..."); });
+  // ========== REFRESH BUTTON LOGIC ==========
+  // When clicked: clear search input, reset filter to "all", update badge, re-render.
+  function performFullRefresh() {
+    // Clear the search text box
+    if (searchInput) {
+      searchInput.value = "";
+      searchTerm = "";
+    }
+    // Reset language filter dropdown to "all"
+    if (languageCombo) {
+      languageCombo.value = "all";
+      currentFilterLang = "all";
+    }
+    // Update badge visibility (hide because all languages)
+    updateFilterBadge();
+    // Re-render cards with cleared filters
+    renderCards();
+    // Show a friendly toast
+    showToast("Filters cleared · showing all languages");
+  }
   
-  // ----- Combo box change event -----
+  refreshBtn.addEventListener("click", performFullRefresh);
+  
+  // Combo box change event
   languageCombo.addEventListener("change", (e) => {
     currentFilterLang = e.target.value;
     updateFilterBadge();
@@ -893,7 +936,6 @@
     renderCards();
   }, (error) => { showToast("Firestore error: " + error.message, true); });
   
-  // clock
   function updateTime() {
     const now = new Date();
     document.getElementById("currentDate").innerText = now.toLocaleDateString('en-GB');
@@ -902,12 +944,10 @@
   updateTime();
   setInterval(updateTime, 1000);
   
-  // close modals background click
   [addModal, passModal, editModal, viewPopup].forEach(modal => {
     modal.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
   });
   
-  // initial badge
   updateFilterBadge();
 </script>
 </body>
