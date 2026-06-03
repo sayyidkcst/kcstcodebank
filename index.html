@@ -1,914 +1,652 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" />
-<title>KCST Code Bank | Smart Combo Filter</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>KCST Download Hub</title>
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  :root {
-    --blue: #1b4ba0;
-    --accent: #2c7be5;
-    --light-accent: #4a90e2;
-    --glass-bg: rgba(255, 255, 255, 0.94);
-    --glass-border: rgba(255, 255, 255, 0.9);
-    --card-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.02);
-    --hover-shadow: 0 20px 32px rgba(0, 0, 0, 0.12);
-    --radius-xl: 24px;
-    --radius-lg: 18px;
-    --radius-md: 14px;
-    --lang-excel: #10b981;
-    --lang-vb6: #2563eb;
-    --lang-html: #f97316;
-    --lang-js: #f59e0b;
-    --lang-sql: #7c3aed;
-    --lang-tally: #8b5cf6;
-    --lang-word: #3b82f6;
-    --lang-other: #6b7280;
-    --gradient-primary: linear-gradient(135deg, #0f2b5c 0%, #1e4a8a 100%);
-    --gradient-bg: linear-gradient(145deg, #f0f5fe 0%, #e9eff8 100%);
-    --gradient-card: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
-    --gradient-add: linear-gradient(135deg, #059669 0%, #10b981 100%);
-    --gradient-refresh: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
-  }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #0a1e2f;
+            line-height: 1.5;
+            transition: background 0.3s ease, color 0.2s ease;
+            scroll-behavior: smooth;
+        }
 
-  body {
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
-    background: var(--gradient-bg);
-    color: #0a1c3a;
-    line-height: 1.5;
-    padding-bottom: 32px;
-  }
+        /* Dark Mode Styles */
+        body.dark {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        body.dark .creation-card {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 15px 30px -12px rgba(0,0,0,0.4);
+        }
+        body.dark .creation-card:hover {
+            background: #2d3a4e;
+            border-color: #3b82f6;
+        }
+        body.dark .btn-download {
+            background: #3b82f6;
+        }
+        body.dark .btn-download:hover {
+            background: #2563eb;
+        }
+        body.dark .meta-info, body.dark .creation-desc {
+            color: #cbd5e1;
+        }
+        body.dark .contact-note, body.dark .creator-badge {
+            background: #334155;
+            color: #e2e8f0;
+        }
+        body.dark .connect-strip {
+            background: #1e293bcc;
+            backdrop-filter: blur(8px);
+            border-color: #334155;
+        }
+        body.dark .btn-contact {
+            border-color: #3b82f6;
+            color: #93c5fd;
+        }
+        body.dark .btn-contact:hover {
+            background: #3b82f6;
+            color: white;
+        }
+        body.dark .file-placeholder {
+            background: #0f172a;
+            color: #94a3b8;
+        }
+        body.dark .card-icon {
+            background: #2d3a5e;
+            color: #60a5fa;
+        }
+        body.dark .release-notes {
+            background: #0f172a;
+            border-color: #334155;
+        }
+        body.dark .newsletter-input {
+            background: #1e293b;
+            border-color: #475569;
+            color: white;
+        }
+        body.dark .footer {
+            border-top-color: #334155;
+        }
+       
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        body.dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 10px;
+        }
 
-  /* modern app bar */
-  .app-bar {
-    background: var(--gradient-primary);
-    backdrop-filter: blur(2px);
-    padding: 14px 20px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    z-index: 110;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
-  }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .brand-icon {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 14px;
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-  }
-
-  .brand-name {
-    font-weight: 800;
-    font-size: 1.45rem;
-    letter-spacing: -0.3px;
-    color: white;
-  }
-
-  .search-wrapper {
-    flex: 1;
-    min-width: 180px;
-    position: relative;
-  }
-
-  .search-icon-abs {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #7c8ba0;
-    pointer-events: none;
-    font-size: 14px;
-  }
-
-  .search-field {
-    width: 100%;
-    padding: 12px 16px 12px 44px;
-    border-radius: 40px;
-    border: none;
-    background: rgba(255, 255, 255, 0.95);
-    font-size: 15px;
-    font-weight: 500;
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-
-  .search-field:focus {
-    outline: none;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  }
-
-  .datetime-pill {
-    background: rgba(255, 255, 255, 0.18);
-    border-radius: 32px;
-    padding: 6px 14px;
-    text-align: center;
-    backdrop-filter: blur(4px);
-  }
-
-  .date-text {
-    font-weight: 600;
-    font-size: 13px;
-    color: white;
-  }
-
-  .time-text {
-    font-size: 12px;
-    font-weight: 500;
-    opacity: 0.9;
-    color: white;
-  }
-
-  /* main container */
-  .main-container {
-    max-width: 1260px;
-    margin: 20px auto;
-    padding: 0 18px;
-  }
-
-  /* action panel */
-  .action-panel {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    border-radius: 32px;
-    padding: 16px 20px;
-    margin-bottom: 24px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-  }
-
-  .greeting {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
-    color: #1e3a6b;
-  }
-
-  .btn-group {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-  }
-
-  .btn-modern {
-    border: none;
-    background: var(--gradient-primary);
-    color: white;
-    padding: 10px 22px;
-    border-radius: 60px;
-    font-weight: 600;
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 6px 12px rgba(27, 75, 160, 0.2);
-  }
-
-  .btn-modern i {
-    font-size: 15px;
-  }
-
-  .btn-modern:active {
-    transform: scale(0.97);
-  }
-
-  .btn-add {
-    background: var(--gradient-add);
-    box-shadow: 0 6px 12px rgba(5, 150, 105, 0.2);
-  }
-
-  .btn-refresh {
-    background: var(--gradient-refresh);
-  }
-
-  /* =========== COMBOBOX STYLES (replaces chips) ========== */
-  .filter-combo-container {
-    margin-bottom: 22px;
-    position: relative;
-    width: 100%;
-  }
-
-  .combo-select {
-    width: 100%;
-    padding: 14px 18px;
-    border-radius: 60px;
-    background: white;
-    border: 1px solid #e2edf7;
-    font-size: 15px;
-    font-weight: 600;
-    color: #0f2b5c;
-    appearance: none;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%232c7be5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
-    background-repeat: no-repeat;
-    background-position: right 20px center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-    transition: all 0.2s;
-    font-family: 'Inter', system-ui;
-  }
-
-  .combo-select:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.2);
-  }
-
-  /* custom badge to show active filter */
-  .active-filter-badge {
-    display: inline-flex;
-    align-items: center;
-    background: #eef2ff;
-    border-radius: 40px;
-    padding: 6px 16px;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--accent);
-    margin-top: 12px;
-  }
-
-  /* cards container (mobile first card layout) */
-  .codes-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-
-  .code-card {
-    background: var(--gradient-card);
-    border-radius: 28px;
-    box-shadow: var(--card-shadow);
-    padding: 20px;
-    transition: all 0.25s;
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .code-card:active {
-    transform: scale(0.99);
-  }
-
-  .card-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
-    gap: 8px;
-  }
-
-  .serial-badge {
-    background: #eef2ff;
-    padding: 4px 12px;
-    border-radius: 40px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--blue);
-  }
-
-  .lang-tag {
-    font-size: 12px;
-    font-weight: 700;
-    padding: 6px 14px;
-    border-radius: 50px;
-    color: white;
-    display: inline-block;
-    background: var(--lang-other);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  }
-
-  .description-text {
-    font-size: 1rem;
-    font-weight: 700;
-    margin: 12px 0 8px;
-    color: #0c2b4b;
-    word-break: break-word;
-  }
-
-  .code-preview-mobile {
-    background: #f1f5f9;
-    padding: 12px;
-    border-radius: 18px;
-    font-family: 'SF Mono', 'JetBrains Mono', monospace;
-    font-size: 11px;
-    line-height: 1.4;
-    color: #1e293b;
-    white-space: pre-wrap;
-    word-break: break-all;
-    max-height: 80px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 12px 0;
-    border: 1px solid #e9edf2;
-  }
-
-  .card-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 12px;
-    justify-content: flex-end;
-  }
-
-  .icon-btn {
-    background: #f0f4fa;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 40px;
-    font-weight: 600;
-    font-size: 13px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-
-  .icon-btn i {
-    font-size: 13px;
-  }
-
-  .btn-view {
-    background: #eef2ff;
-    color: #2c7be5;
-  }
-
-  .btn-edit {
-    background: #fff7e5;
-    color: #d97706;
-  }
-
-  .btn-delete {
-    background: #fee2e2;
-    color: #dc2626;
-  }
-
-  /* modal improvements */
-  .modal-glass {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(8px);
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-    padding: 16px;
-  }
-
-  .modal-card {
-    background: white;
-    width: 100%;
-    max-width: 560px;
-    border-radius: 40px;
-    padding: 24px 22px;
-    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s;
-  }
-
-  .modal-card h3 {
-    font-size: 1.7rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-
-  .input-field, .modal-select {
-    width: 100%;
-    padding: 14px 18px;
-    border-radius: 28px;
-    border: 1px solid #cfdfed;
-    background: #fefefe;
-    font-size: 15px;
-    margin-bottom: 18px;
-    transition: 0.2s;
-  }
-
-  textarea {
-    width: 100%;
-    border-radius: 24px;
-    padding: 14px;
-    font-family: monospace;
-    border: 1px solid #cfdfed;
-    min-height: 170px;
-  }
-
-  .modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 20px;
-  }
-
-  .empty-illustration {
-    text-align: center;
-    padding: 48px 20px;
-    background: #ffffffc9;
-    border-radius: 48px;
-    color: #59748f;
-  }
-
-  .toast-message {
-    position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: #1f2937;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 60px;
-    font-weight: 500;
-    z-index: 2100;
-    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    backdrop-filter: blur(8px);
-    background: rgba(0, 0, 0, 0.85);
-    pointer-events: none;
-  }
-
-  .toast-message.show {
-    transform: translateX(-50%) translateY(0);
-  }
-
-  /* small adjustments */
-  @media (max-width: 520px) {
-    .btn-modern {
-      padding: 8px 18px;
-      font-size: 13px;
-    }
-    .modal-card {
-      padding: 20px;
-    }
-  }
-</style>
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 2rem 3rem;
+            position: relative;
+            z-index: 2;
+        }
+       
+        .brand {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(59,130,246,0.2);
+            padding-bottom: 1.2rem;
+        }
+       
+        .logo h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1E2A5E, #3b82f6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+       
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+       
+        .dark-toggle {
+            background: #eef2ff;
+            border: none;
+            font-size: 1.3rem;
+            padding: 8px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+       
+        body.dark .dark-toggle {
+            background: #334155;
+            color: #facc15;
+        }
+       
+        .creator-badge, .contact-note {
+            background: #eef2ff;
+            padding: 0.3rem 1rem;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+       
+        .featured-banner {
+            background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            margin: 1.5rem 0 2rem;
+            color: white;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+       
+        .featured-text h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+       
+        .featured-badge {
+            background: #facc15;
+            color: #1e293b;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+       
+        .featured-btn {
+            background: white;
+            color: #1e3a8a;
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+       
+        .featured-btn:hover {
+            transform: scale(1.02);
+            background: #f8fafc;
+        }
+       
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+       
+        .creation-card {
+            background: rgba(255,255,255,0.9);
+            border-radius: 1.8rem;
+            padding: 1.6rem;
+            transition: all 0.25s ease;
+            border: 1px solid #e2edff;
+            box-shadow: 0 10px 20px -8px rgba(0,0,0,0.05);
+        }
+       
+        .creation-card:hover {
+            transform: translateY(-5px);
+        }
+       
+        .card-icon {
+            font-size: 2rem;
+            background: #eef2ff;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            color: #2563eb;
+            margin-bottom: 1rem;
+        }
+       
+        .creation-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+       
+        .download-count {
+            font-size: 0.7rem;
+            background: #e6f0ff;
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 30px;
+            margin: 0.5rem 0;
+            font-weight: 600;
+        }
+       
+        body.dark .download-count {
+            background: #2d3a5e;
+        }
+       
+        .release-notes {
+            margin-top: 0.8rem;
+            background: #f9fafc;
+            border-radius: 1rem;
+            padding: 0.6rem;
+            font-size: 0.75rem;
+            border-left: 3px solid #3b82f6;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+       
+        .release-summary {
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+        }
+       
+        .release-detail {
+            display: none;
+            margin-top: 6px;
+            color: #475569;
+        }
+       
+        body.dark .release-detail {
+            color: #cbd5e6;
+        }
+       
+        .release-notes.open .release-detail {
+            display: block;
+        }
+       
+        .btn-download {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #0f172a;
+            color: white;
+            padding: 0.7rem 1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: 0.2s;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+        }
+       
+        .btn-download:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+       
+        .file-placeholder {
+            font-size: 0.65rem;
+            text-align: center;
+            margin-top: 10px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 30px;
+        }
+       
+        .connect-strip {
+            margin-top: 3rem;
+            background: #ffffffcc;
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+            border: 1px solid #fff;
+        }
+       
+        .newsletter {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+       
+        .newsletter-input {
+            padding: 0.6rem 1rem;
+            border-radius: 60px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-family: inherit;
+            min-width: 200px;
+        }
+       
+        .newsletter-btn {
+            background: #0f172a;
+            border: none;
+            padding: 0.6rem 1.4rem;
+            border-radius: 60px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+       
+        body.dark .newsletter-btn {
+            background: #3b82f6;
+        }
+       
+        .btn-contact {
+            background: transparent;
+            border: 1.5px solid #2563eb;
+            padding: 0.6rem 1.4rem;
+            border-radius: 60px;
+            font-weight: 600;
+            color: #1e3a8a;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+       
+        .btn-contact:hover {
+            background: #2563eb;
+            color: white;
+        }
+       
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.75rem;
+            border-top: 1px solid #cbd5e180;
+            padding-top: 2rem;
+        }
+       
+        @media (max-width: 720px) {
+            .container { padding: 1.2rem; }
+            .featured-banner { flex-direction: column; text-align: center; }
+        }
+       
+        .toast-msg {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172adb;
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            z-index: 999;
+            animation: fadeInOut 2.5s ease forwards;
+        }
+       
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+        }
+    </style>
 </head>
 <body>
-
-<div class="app-bar">
-  <div class="brand">
-    <div class="brand-icon"><i class="fas fa-database"></i></div>
-    <div class="brand-name">KCST Code Bank</div>
-  </div>
-  <div class="search-wrapper">
-    <i class="fas fa-search search-icon-abs"></i>
-    <input type="text" id="globalSearchInput" class="search-field" placeholder="Search snippets..." autocomplete="off">
-  </div>
-  <div class="datetime-pill">
-    <div class="date-text" id="currentDate">--</div>
-    <div class="time-text" id="currentTime">--</div>
-  </div>
-</div>
-
-<div class="main-container">
-  <div class="action-panel">
-    <div class="greeting">
-      <i class="fas fa-code"></i> 
-      <span>KCST Multimedia · 96_333_151_77</span>
-    </div>
-    <div class="btn-group">
-      <button class="btn-modern btn-add" id="openAddBtnMobile"><i class="fas fa-plus-circle"></i> Add Code</button>
-      <button class="btn-modern btn-refresh" id="refreshListBtn"><i class="fas fa-sync-alt"></i> Sync</button>
-    </div>
-  </div>
-
-  <!-- ========== COMBO BOX FILTER (replaces chips) ========= -->
-  <div class="filter-combo-container">
-    <select id="languageComboFilter" class="combo-select">
-      <option value="all">📚 All Languages (show everything)</option>
-      <option value="Excel">📊 Excel</option>
-      <option value="VB6">⚙️ VB6</option>
-      <option value="HTML">🌐 HTML</option>
-      <option value="JavaScript">🟨 JavaScript</option>
-      <option value="SQL">🗄️ SQL</option>
-      <option value="Tally">📒 Tally</option>
-      <option value="MS Word">📄 MS Word</option>
-      <option value="Other">🎲 Other</option>
-    </select>
-    <div id="filterStatus" class="active-filter-badge" style="display: none;">
-      <i class="fas fa-filter"></i> <span id="filterLabel">All Languages</span>
-    </div>
-  </div>
-
-  <!-- code cards grid -->
-  <div id="codesContainer" class="codes-grid">
-    <div class="empty-illustration">
-      <i class="fas fa-terminal" style="font-size: 48px; opacity: 0.5; margin-bottom: 16px; display: block;"></i>
-      <p style="font-weight: 600;">Loading snippets...</p>
-    </div>
-  </div>
-</div>
-
-<!-- ADD MODAL -->
-<div id="addModalGlass" class="modal-glass">
-  <div class="modal-card">
-    <h3><i class="fas fa-plus-circle" style="color:#10b981"></i> New snippet</h3>
-    <input type="text" id="addDescription" class="input-field" placeholder="Short description (e.g. VLOOKUP formula)">
-    <select id="addLanguageSelect" class="modal-select">
-      <option>Excel</option><option>VB6</option><option>HTML</option><option>JavaScript</option>
-      <option>SQL</option><option>Tally</option><option>MS Word</option><option>Other</option>
-    </select>
-    <textarea id="addCodeArea" placeholder="Paste your code here..."></textarea>
-    <div class="modal-actions">
-      <button class="icon-btn" id="closeAddModalBtn" style="background:#eef2ff;">Cancel</button>
-      <button class="btn-modern btn-add" id="confirmAddBtn">💾 Save Code</button>
-    </div>
-  </div>
-</div>
-
-<!-- PASSWORD MODAL -->
-<div id="passwordModal" class="modal-glass">
-  <div class="modal-card">
-    <h3><i class="fas fa-lock"></i> Admin access</h3>
-    <input type="password" id="passwordInput" class="input-field" placeholder="Enter master password">
-    <label style="display: flex; gap: 10px; align-items: center; margin: 12px 0;">
-      <input type="checkbox" id="sessionCheckbox"> <span style="font-size: 14px;">Keep session unlocked</span>
-    </label>
-    <div class="modal-actions">
-      <button class="icon-btn" id="closePassBtn">Cancel</button>
-      <button class="btn-modern" id="submitPasswordBtn">Unlock</button>
-    </div>
-  </div>
-</div>
-
-<!-- EDIT MODAL -->
-<div id="editModalGlass" class="modal-glass">
-  <div class="modal-card">
-    <h3><i class="fas fa-pen-alt"></i> Edit Snippet</h3>
-    <input type="text" id="editDescription" class="input-field">
-    <select id="editLanguageSelect" class="modal-select">
-      <option>Excel</option><option>VB6</option><option>HTML</option><option>JavaScript</option>
-      <option>SQL</option><option>Tally</option><option>MS Word</option><option>Other</option>
-    </select>
-    <textarea id="editCodeArea" rows="6"></textarea>
-    <div class="modal-actions">
-      <button class="icon-btn" id="cancelEditBtn">Cancel</button>
-      <button class="btn-modern btn-add" id="saveEditBtn">Update</button>
-    </div>
-  </div>
-</div>
-
-<!-- VIEW/COPY POPUP -->
-<div id="viewPopup" class="modal-glass">
-  <div class="modal-card" style="max-width: 620px;">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <div><strong id="popupTitle">Code Snippet</strong></div>
-      <button id="closeViewPopup" style="background: none; border: none; font-size: 28px; cursor: pointer;">&times;</button>
-    </div>
-    <pre id="viewCodePre" style="background: #f1f5f9; padding: 18px; border-radius: 24px; overflow-x: auto; font-size: 12px; font-family: monospace; margin: 18px 0; white-space: pre-wrap; max-height: 400px;"></pre>
-    <div style="display: flex; justify-content: flex-end;">
-      <button class="btn-modern" id="copyCodeBtn" style="background: #2c7be5;"><i class="fas fa-copy"></i> Copy to clipboard</button>
-    </div>
-  </div>
-</div>
-
-<div id="globalToast" class="toast-message"></div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBWBljw0JEqVU-xudkuHgEWcdv-13Uhw9g",
-    authDomain: "kcst-code.firebaseapp.com",
-    projectId: "kcst-code",
-    storageBucket: "kcst-code.firebasestorage.app",
-    messagingSenderId: "1015447918088",
-    appId: "1:1015447918088:web:8ddf498468c3fc568563bd"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const codesRef = collection(db, "codes");
-  const q = query(codesRef, orderBy("createdAt", "desc"));
-
-  // state
-  let allSnippets = []; // { id, description, code, language }
-  let currentFilterLang = "all";
-  let searchTerm = "";
-  let sessionUnlocked = sessionStorage.getItem("kcst_edit_unlocked") === "1";
-  let pendingEditId = null;
-  let pendingDeleteId = null;
-  let pendingActionType = null;
-
-  const EDIT_PASSWORD = "530194706Kcst##";
-
-  // DOM elements
-  const container = document.getElementById("codesContainer");
-  const searchInput = document.getElementById("globalSearchInput");
-  const refreshBtn = document.getElementById("refreshListBtn");
-  const openAddBtn = document.getElementById("openAddBtnMobile");
-  const addModal = document.getElementById("addModalGlass");
-  const closeAdd = document.getElementById("closeAddModalBtn");
-  const confirmAdd = document.getElementById("confirmAddBtn");
-  const addDesc = document.getElementById("addDescription");
-  const addLang = document.getElementById("addLanguageSelect");
-  const addCode = document.getElementById("addCodeArea");
-  
-  const passModal = document.getElementById("passwordModal");
-  const passInput = document.getElementById("passwordInput");
-  const rememberChk = document.getElementById("sessionCheckbox");
-  const closePass = document.getElementById("closePassBtn");
-  const submitPass = document.getElementById("submitPasswordBtn");
-  
-  const editModal = document.getElementById("editModalGlass");
-  const editDesc = document.getElementById("editDescription");
-  const editLangSelect = document.getElementById("editLanguageSelect");
-  const editCodeArea = document.getElementById("editCodeArea");
-  const cancelEdit = document.getElementById("cancelEditBtn");
-  const saveEdit = document.getElementById("saveEditBtn");
-  
-  const viewPopup = document.getElementById("viewPopup");
-  const popupTitle = document.getElementById("popupTitle");
-  const viewCodePre = document.getElementById("viewCodePre");
-  const closeView = document.getElementById("closeViewPopup");
-  const copyCodeBtn = document.getElementById("copyCodeBtn");
-  
-  const toastDiv = document.getElementById("globalToast");
-  
-  // COMBO BOX elements
-  const languageCombo = document.getElementById("languageComboFilter");
-  const filterStatusDiv = document.getElementById("filterStatus");
-  const filterLabelSpan = document.getElementById("filterLabel");
-
-  function showToast(msg, isError = false) {
-    toastDiv.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
-    toastDiv.classList.add("show");
-    setTimeout(() => toastDiv.classList.remove("show"), 2800);
-  }
-
-  // update filter badge visibility
-  function updateFilterBadge() {
-    if (currentFilterLang === "all") {
-      filterStatusDiv.style.display = "none";
-    } else {
-      filterStatusDiv.style.display = "inline-flex";
-      let displayName = currentFilterLang;
-      if (currentFilterLang === "Excel") displayName = "📊 Excel";
-      else if (currentFilterLang === "VB6") displayName = "⚙️ VB6";
-      else if (currentFilterLang === "HTML") displayName = "🌐 HTML";
-      else if (currentFilterLang === "JavaScript") displayName = "🟨 JavaScript";
-      else if (currentFilterLang === "SQL") displayName = "🗄️ SQL";
-      else if (currentFilterLang === "Tally") displayName = "📒 Tally";
-      else if (currentFilterLang === "MS Word") displayName = "📄 MS Word";
-      else if (currentFilterLang === "Other") displayName = "🎲 Other";
-      filterLabelSpan.innerText = displayName;
-    }
-  }
-
-  // render cards with filter & search (combo version)
-  function renderCards() {
-    let filtered = [...allSnippets];
-    if (currentFilterLang !== "all") {
-      filtered = filtered.filter(s => (s.language || "Other").toLowerCase() === currentFilterLang.toLowerCase());
-    }
-    if (searchTerm.trim() !== "") {
-      const term = searchTerm.trim().toLowerCase();
-      filtered = filtered.filter(s => 
-        (s.description || "").toLowerCase().includes(term) || 
-        (s.code || "").toLowerCase().includes(term) ||
-        (s.language || "").toLowerCase().includes(term)
-      );
-    }
-    if (filtered.length === 0) {
-      container.innerHTML = `<div class="empty-illustration"><i class="fas fa-search"></i><p style="margin-top:12px;">No matching snippets</p><small>Try different language or keyword</small></div>`;
-      return;
-    }
-    let html = "";
-    filtered.forEach((item, idx) => {
-      const serial = idx + 1;
-      const lang = item.language || "Other";
-      let langColor = "var(--lang-other)";
-      if (lang.toLowerCase().includes("excel")) langColor = "var(--lang-excel)";
-      else if (lang.toLowerCase().includes("vb")) langColor = "var(--lang-vb6)";
-      else if (lang.toLowerCase().includes("html")) langColor = "var(--lang-html)";
-      else if (lang.toLowerCase().includes("javascript") || lang === "js") langColor = "var(--lang-js)";
-      else if (lang.toLowerCase().includes("sql")) langColor = "var(--lang-sql)";
-      else if (lang.toLowerCase().includes("tally")) langColor = "var(--lang-tally)";
-      else if (lang.toLowerCase().includes("word")) langColor = "var(--lang-word)";
-      
-      const previewCode = (item.code || "").replace(/\n/g, " ").substring(0, 100) + ((item.code || "").length > 100 ? "…" : "");
-      html += `
-        <div class="code-card" data-id="${item.id}" data-lang="${lang}">
-          <div class="card-header-row">
-            <span class="serial-badge"><i class="fas fa-hashtag"></i> ${serial}</span>
-            <span class="lang-tag" style="background:${langColor};">${escapeHtml(lang)}</span>
-          </div>
-          <div class="description-text">${escapeHtml(item.description || "Untitled")}</div>
-          <div class="code-preview-mobile"><code>${escapeHtml(previewCode)}</code></div>
-          <div class="card-actions">
-            <button class="icon-btn btn-view view-action" data-id="${item.id}" data-serial="${serial}"><i class="fas fa-eye"></i> View</button>
-            <button class="icon-btn btn-edit edit-action" data-id="${item.id}"><i class="fas fa-edit"></i> Edit</button>
-            <button class="icon-btn btn-delete delete-action" data-id="${item.id}"><i class="fas fa-trash"></i> Delete</button>
-          </div>
+<div class="container">
+    <div class="brand">
+        <div class="logo">
+            <h1>KCST Media Technology</h1>
+            <p><span class="creator-badge"><i class="fas fa-microchip"></i> By SAYYID SHEREEF KC</span>
+            <span class="contact-note"><i class="fas fa-phone-alt"></i> 9633315177</span></p>
         </div>
-      `;
-    });
-    container.innerHTML = html;
-    
-    // attach dynamic event listeners
-    document.querySelectorAll(".view-action").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const id = btn.dataset.id;
-        const snippet = allSnippets.find(s => s.id === id);
-        if (snippet) openViewPopup(snippet, btn.dataset.serial);
-      });
-    });
-    document.querySelectorAll(".edit-action").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const id = btn.dataset.id;
-        requestPasswordThen("edit", id);
-      });
-    });
-    document.querySelectorAll(".delete-action").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const id = btn.dataset.id;
-        requestPasswordThen("delete", id);
-      });
-    });
-  }
+        <div class="header-actions">
+            <button class="dark-toggle" id="darkModeToggle"><i class="fas fa-moon"></i></button>
+        </div>
+    </div>
 
-  function escapeHtml(str) { 
-    if (!str) return "";
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
-  }
+    <!-- Featured Release Banner -->
+    <div class="featured-banner">
+        <div class="featured-text">
+            <span class="featured-badge"><i class="fas fa-star"></i> NEW RELEASE</span>
+            <h3>⚡ KCST Render Engine</h3>
+            <p>AI-powered upscaling & real-time rendering — now available in beta.</p>
+        </div>
+        <a href="#" class="featured-btn" id="featuredDownloadBtn"><i class="fas fa-download"></i> Try Beta</a>
+    </div>
 
-  function openViewPopup(snippet, serial) {
-    popupTitle.innerText = `#${serial} — ${snippet.description || "Code"} (${snippet.language || "Other"})`;
-    viewCodePre.innerText = snippet.code || "// no code content";
-    viewPopup.style.display = "flex";
-  }
+    <!-- Download Grid with REAL file links -->
+    <div class="download-grid" id="downloadGrid">
+        <!-- Card 1: Media Studio Pro -->
+        <div class="creation-card">
+            <div class="card-icon"><i class="fas fa-film"></i></div>
+            <h3>Blue Light Finance Pro</h3>
+            <div class="creation-desc">A BlueLight Finance Pro is a powerful and easy-to-use accounting software designed to help businesses manage their financial records with clarity, accuracy, and confidence.</div>
+            
+            
+            <!-- 🔽 REPLACE THIS URL WITH YOUR ACTUAL FILE LINK 🔽 -->
+            <a href="https://www.mediafire.com/file/m8565azqjiv4rjo/Blue_Light_Finance_Pro.exe/file" class="btn-download" data-product="Blue Light Finance Pro" data-filename="Blue_Light_Finance_Pro.exe" data-size="187 MB" target="_blank"><i class="fas fa-download"></i> Download Pro</a>
+            <div class="file-placeholder"></div>
+        </div>
 
-  copyCodeBtn.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(viewCodePre.innerText);
-      showToast("Code copied to clipboard!");
-    } catch(e) { showToast("Copy failed", true); }
-  });
-  closeView.addEventListener("click", () => { viewPopup.style.display = "none"; });
-  viewPopup.addEventListener("click", (e) => { if(e.target === viewPopup) viewPopup.style.display = "none"; });
+        <!-- Card 2: DesignLab Creator -->
+        <div class="creation-card">
+            <div class="card-icon"><i class="fas fa-pen-fancy"></i></div>
+            <h3>KCST Accounting 2023</h3>
+            <div class="creation-desc">Ultimate Accounting Software for Modern Businesses.</div>
+            
+            
+            <!-- 🔽 REPLACE THIS URL WITH YOUR ACTUAL FILE LINK 🔽 -->
+            <a href="https://www.mediafire.com/file/yq7ypt9ucto5w3n/KCST_Accounting_2023.exe/file" class="btn-download" data-product="DesignLab Creator" data-filename="DesignLab_Creator_v3.0.2.zip" data-size="245 MB" target="_blank"><i class="fas fa-download"></i> Download Now</a>
+            <div class="file-placeholder"></div>
+        </div>
 
-  function requestPasswordThen(action, docId) {
-    if (sessionUnlocked) {
-      if (action === "edit") openEditDialog(docId);
-      else if (action === "delete") confirmDelete(docId);
-      return;
-    }
-    pendingActionType = action;
-    pendingEditId = docId;
-    pendingDeleteId = docId;
-    passInput.value = "";
-    passModal.style.display = "flex";
-  }
+        <!-- Card 3: Spectrum Audio Engine -->
+        <div class="creation-card">
+            <div class="card-icon"><i class="fas fa-headphones"></i></div>
+            <h3>KCST Vault - Android App</h3>
+            
+            <div class="creation-desc">Professional DAW plugin suite with mastering chain & low latency.</div>
+      
 
-  function openEditDialog(docId) {
-    const snippet = allSnippets.find(s => s.id === docId);
-    if (!snippet) { showToast("Error loading snippet", true); return; }
-    editDesc.value = snippet.description || "";
-    editLangSelect.value = snippet.language || "Excel";
-    editCodeArea.value = snippet.code || "";
-    pendingEditId = docId;
-    editModal.style.display = "flex";
-  }
+            <!-- 🔽 REPLACE THIS URL WITH YOUR ACTUAL FILE LINK 🔽 -->
+            <a href="https://www.mediafire.com/file/xk4x6xc8hl0h2bo/KCST_Vault.apk/file" class="btn-download" data-product="Spectrum Audio Engine" data-filename="Spectrum_Audio_Engine_1.7.zip" data-size="312 MB" target="_blank"><i class="fas fa-download"></i>Download Vault</a>
+            <div class="file-placeholder"></div>
+        </div>
 
-  async function confirmDelete(docId) {
-    try {
-      await deleteDoc(doc(db, "codes", docId));
-      showToast("Snippet permanently deleted");
-    } catch (err) { showToast("Delete failed", true); }
-  }
 
-  submitPass.addEventListener("click", () => {
-    if (passInput.value === EDIT_PASSWORD) {
-      if (rememberChk.checked) {
-        sessionStorage.setItem("kcst_edit_unlocked", "1");
-        sessionUnlocked = true;
-      } else { sessionUnlocked = true; }
-      passModal.style.display = "none";
-      if (pendingActionType === "edit" && pendingEditId) openEditDialog(pendingEditId);
-      else if (pendingActionType === "delete" && pendingDeleteId) confirmDelete(pendingDeleteId);
-      pendingActionType = null;
-    } else {
-      showToast("Incorrect password", true);
-    }
-  });
-  closePass.addEventListener("click", () => { passModal.style.display = "none"; pendingActionType = null; });
+        <div class="creation-card">
+            <div class="card-icon"><i class="fas fa-code"></i></div>
+            <h3>Windows Activation</h3> 
+            <div class="creation-desc"> Activate your Windows OS with our legitimate tools. </div>
+            <!-- 🔽 REPLACE THIS URL WITH YOUR ACTUAL FILE LINK 🔽 -->
+            <a href="https://www.mediafire.com/file/fznu2nk64dd96y9/Windows_10_Activate.txt/file" class="btn-download" data-product="Code Fusion IDE" data-filename="CodeFusionIDE_b12.zip" data-size="98 MB" target="_blank"><i class="fas fa-download"></i> Download Now</a>
+        </div>
 
-  saveEdit.addEventListener("click", async () => {
-    if (!pendingEditId) return;
-    const newDesc = editDesc.value.trim();
-    const newCode = editCodeArea.value;
-    const newLang = editLangSelect.value;
-    try {
-      const docRef = doc(db, "codes", pendingEditId);
-      await updateDoc(docRef, { description: newDesc, code: newCode, language: newLang, updatedAt: serverTimestamp() });
-      showToast("Updated successfully");
-      editModal.style.display = "none";
-      pendingEditId = null;
-    } catch(e) { showToast("Update error", true); }
-  });
-  cancelEdit.addEventListener("click", () => { editModal.style.display = "none"; pendingEditId = null; });
 
-  // Add snippet
-  confirmAdd.addEventListener("click", async () => {
-    const desc = addDesc.value.trim();
-    const code = addCode.value;
-    const language = addLang.value;
-    if (!desc && !code) { showToast("Please enter description or code", true); return; }
-    try {
-      await addDoc(codesRef, { description: desc, code: code, language: language, createdAt: serverTimestamp() });
-      addModal.style.display = "none";
-      addDesc.value = ""; addCode.value = ""; addLang.value = "Excel";
-      showToast("Code saved!");
-    } catch(e) { showToast("Failed to save", true); }
-  });
-  openAddBtn.addEventListener("click", () => { addModal.style.display = "flex"; });
-  closeAdd.addEventListener("click", () => { addModal.style.display = "none"; });
-  
-  refreshBtn.addEventListener("click", () => { showToast("Refreshing list..."); });
-  
-  // ----- Combo box change event -----
-  languageCombo.addEventListener("change", (e) => {
-    currentFilterLang = e.target.value;
-    updateFilterBadge();
-    renderCards();
-  });
-  
-  searchInput.addEventListener("input", (e) => { searchTerm = e.target.value; renderCards(); });
-  
-  // realtime snapshot
-  onSnapshot(q, (snapshot) => {
-    allSnippets = [];
-    snapshot.forEach(docSnap => {
-      const data = docSnap.data();
-      allSnippets.push({
-        id: docSnap.id,
-        description: data.description || "",
-        code: data.code || "",
-        language: data.language || "Other",
-      });
-    });
-    renderCards();
-  }, (error) => { showToast("Firestore error: " + error.message, true); });
-  
-  // clock
-  function updateTime() {
-    const now = new Date();
-    document.getElementById("currentDate").innerText = now.toLocaleDateString('en-GB');
-    document.getElementById("currentTime").innerText = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-  }
-  updateTime();
-  setInterval(updateTime, 1000);
-  
-  // close modals background click
-  [addModal, passModal, editModal, viewPopup].forEach(modal => {
-    modal.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
-  });
-  
-  // initial badge
-  updateFilterBadge();
+
+        <div class="creation-card">
+            <div class="card-icon"><i class="fas fa-code"></i></div>
+            <h3>Window 7 Startmenu</h3> 
+            <div class="creation-desc"> a lightweight Windows customization software that restores classic Start menus, taskbars, and File Explorer ribbons to Windows 8, 10, and 11. </div>
+            <!-- 🔽 REPLACE THIS URL WITH YOUR ACTUAL FILE LINK 🔽 -->
+            <a href="https://www.mediafire.com/file/ti7jw6rh5hiswkf/Windows_7_Start_menu.rar/file" class="btn-download" data-product="Code Fusion IDE" data-filename="CodeFusionIDE_b12.zip" data-size="98 MB" target="_blank"><i class="fas fa-download"></i> Download Now</a>
+        </div>
+
+        <div class="creation-card">
+            <div class="card-icon"><i class="fas fa-code"></i></div>
+            <h3>Office File Manager</h3> 
+            <div class="creation-desc"> manage your office files with or tool. </div>
+            <!-- 🔽 REPLACE THIS URL WITH YOUR ACTUAL FILE LINK 🔽 -->
+            <a href="https://www.mediafire.com/file/4w27aw1pf0hwrgm/KCST_Office_File_Manager.rar/file" class="btn-download" data-product="Code Fusion IDE" data-filename="CodeFusionIDE_b12.zip" data-size="98 MB" target="_blank"><i class="fas fa-download"></i> Download Now</a>
+        </div>
+
+        <div class="creation-card">
+            <div class="card-icon"><i class="fas fa-code"></i></div>
+            <h3>Nova Hub</h3> 
+            <div class="creation-desc"> Online Startpage for. </div>
+            <!-- 🔽 REPLACE THIS URL WITH YOUR ACTUAL FILE LINK 🔽 -->
+            <a href="https://sites.google.com/view/kcsthome/novahub" class="btn-download" data-product="Code Fusion IDE" data-filename="CodeFusionIDE_b12.zip" data-size="98 MB" target="_blank"><i class="fas fa-download"></i>Visit the Page</a>
+        </div>
+
+        <!-- Card 6: Code Fusion IDE -->
+        <div class="creation-card">
+            <div class="card-icon"><i class="fas fa-code"></i></div>
+            <h3>KCST Code Bank</h3> 
+            <div class="creation-desc"> The runtime files are already built into modern versions of Windows, ensuring legacy applications run seamlessly without additional downloads. </div>
+            <!-- 🔽 REPLACE THIS URL WITH YOUR ACTUAL FILE LINK 🔽 -->
+            <a href="https://sayyidkcst.github.io/kcstcodebank/" class="btn-download" data-product="Code Fusion IDE" data-filename="CodeFusionIDE_b12.zip" data-size="98 MB" target="_blank"><i class="fas fa-download"></i>Visit the Page</a>
+        </div>
+
+
+
+        <!-- Card 6: Code Fusion IDE -->
+        <div class="creation-card">
+            <div class="card-icon"><i class="fas fa-code"></i></div>
+            <h3>System Runtime Access</h3> 
+            <div class="creation-desc"> The runtime files are already built into modern versions of Windows, ensuring legacy applications run seamlessly without additional downloads. </div>
+            <!-- 🔽 REPLACE THIS URL WITH YOUR ACTUAL FILE LINK 🔽 -->
+            <a href="https://www.mediafire.com/file/vsgeasit6fa4k1s/System_Runtime_Access.exe/file" class="btn-download" data-product="Code Fusion IDE" data-filename="CodeFusionIDE_b12.zip" data-size="98 MB" target="_blank"><i class="fas fa-download"></i> Download Now</a>
+        </div>
+    </div>
+
+
+            <!-- Card 6: Code Fusion IDE -->
+
+
+
+    <!-- Connect strip + Newsletter signup -->
+    <div class="connect-strip">
+        <div><i class="fas fa-envelope-open-text"></i> <strong>Get updates</strong> — New creations, exclusive patches</div>
+        <div class="newsletter">
+            <input type="email" class="newsletter-input" id="newsletterEmail" placeholder="your@email.com">
+            <button class="newsletter-btn" id="subscribeBtn"><i class="fas fa-paper-plane"></i> Subscribe</button>
+        </div>
+        <a href="tel:+919633315177" class="btn-contact"><i class="fas fa-phone"></i> 9633315177</a>
+    </div>
+
+    <div class="footer">
+        <p>© 2025 KCST Media Technology — engineered by SAYYID SHEREEF KC. All digital creations are licensed for personal & commercial use.</p>
+        <p style="margin-top:6px"><i class="fas fa-shield-alt"></i> Secure downloads • SHA256 available on request</p>
+    </div>
+</div>
+
+<script>
+    (function() {
+        function showToast(msg) {
+            let toast = document.createElement('div');
+            toast.className = 'toast-msg';
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 2500);
+        }
+
+        // Dark Mode Toggle
+        const toggleBtn = document.getElementById('darkModeToggle');
+        toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            const icon = toggleBtn.querySelector('i');
+            if(document.body.classList.contains('dark')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                showToast("🌙 Dark mode activated");
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                showToast("☀️ Light mode restored");
+            }
+        });
+
+        // Release notes expand/collapse
+        const releaseDivs = document.querySelectorAll('.release-notes');
+        releaseDivs.forEach(div => {
+            div.addEventListener('click', (e) => {
+                e.stopPropagation();
+                div.classList.toggle('open');
+            });
+        });
+
+        // Download counters increment (when real download is clicked)
+        let counters = {
+            studio: 1284,
+            designlab: 976,
+            audio: 2301,
+            codeide: 654
+        };
+       
+        function updateCounterDisplay(id, value) {
+            const countSpan = document.querySelector(`.download-count[data-id="${id}"] span`);
+            if(countSpan) countSpan.innerText = value;
+        }
+       
+        // Track downloads on real links
+        const downloadBtns = document.querySelectorAll('.btn-download');
+        downloadBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const product = btn.getAttribute('data-product') || "KCST Creation";
+                // increment download counter
+                const card = btn.closest('.creation-card');
+                if(card) {
+                    let counterId = null;
+                    if(product.includes("Media Studio")) counterId = "studio";
+                    else if(product.includes("DesignLab")) counterId = "designlab";
+                    else if(product.includes("Spectrum")) counterId = "audio";
+                    else if(product.includes("Code Fusion")) counterId = "codeide";
+                    if(counterId && counters[counterId] !== undefined) {
+                        counters[counterId] += 1;
+                        updateCounterDisplay(counterId, counters[counterId]);
+                        showToast(`📈 Download started! ${counters[counterId]} total downloads`);
+                    }
+                }
+                // The actual download happens via href, no need to prevent default
+            });
+        });
+
+        // Featured download button - replace with real link
+        const featuredBtn = document.getElementById('featuredDownloadBtn');
+        if(featuredBtn) {
+            featuredBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // 🔽 Replace this URL with your actual featured product file 🔽
+                window.location.href = "https://www.mediafire.com/file/6lg9oc526cgs5m9/KCST_Render_Engine.txt/file";
+                showToast("✨ Downloading KCST Neural Render Engine Beta ✨");
+            });
+        }
+
+        // Newsletter subscription
+        const subscribeBtn = document.getElementById('subscribeBtn');
+        const emailInput = document.getElementById('newsletterEmail');
+        subscribeBtn.addEventListener('click', () => {
+            const email = emailInput.value.trim();
+            if(email && email.includes('@') && email.includes('.')) {
+                showToast(`📧 Thanks! ${email} added to KCST newsletter.`);
+                emailInput.value = '';
+                // You can add AJAX call here to save email to your database
+            } else {
+                showToast("⚠️ Please enter a valid email address");
+            }
+        });
+    })();
 </script>
 </body>
 </html>
