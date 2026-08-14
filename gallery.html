@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Gallery Pro · Mobile</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
+    <style>
+        /* ─── RESET & BASE ─── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f0f4f9;
+            color: #1a2639;
+            min-height: 100vh;
+            padding-bottom: 80px;
+            /* Space for bottom nav */
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ─── PAGE CONTAINER ─── */
+        .page {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0 16px 16px;
+        }
+
+        /* ─── HEADER ─── */
+        .header {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 12px rgba(0, 20, 40, 0.06);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 12px 0 16px;
+            border: 1px solid rgba(200, 215, 235, 0.2);
+            position: sticky;
+            top: 12px;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.92);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 1.4rem;
+            color: #1e4a6b;
+            background: #e4edf8;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .logo h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #1a3a5c, #256a8b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo span {
+            display: none;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ─── SEARCH ─── */
+        .search-box {
+            background: #f2f6fc;
+            border-radius: 30px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1.5px solid transparent;
+            transition: 0.2s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .search-box:focus-within {
+            border-color: #256a8b;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(37, 106, 139, 0.08);
+        }
+
+        .search-box i {
+            color: #7a9bb8;
+            font-size: 0.85rem;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            padding: 6px 0;
+            font-size: 0.9rem;
+            outline: none;
+            width: 100%;
+            color: #1a2c3e;
+            font-family: inherit;
+        }
+
+        .search-box input::placeholder {
+            color: #9ab0c7;
+            font-size: 0.85rem;
+        }
+
+        .search-box .clear-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #9ab0c7;
+            display: none;
+            font-size: 1rem;
+            padding: 0 2px;
+        }
+
+        .search-box .clear-btn:active {
+            color: #b22234;
+        }
+
+        /* ─── ICON BUTTONS ─── */
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: #eef3fa;
+            color: #1e4a6b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.92);
+            background: #dde6f2;
+        }
+
+        .icon-btn-primary {
+            background: #1e4a6b;
+            color: white;
+        }
+        .icon-btn-primary:active {
+            background: #143a54;
+        }
+
+        .icon-btn-danger {
+            background: #b22234;
+            color: white;
+        }
+        .icon-btn-danger:active {
+            background: #8f1a2a;
+        }
+
+        /* ─── UPLOAD BUTTON ─── */
+        .upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+        }
+
+        .upload-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            font-size: 100px;
+        }
+
+        .upload-btn {
+            padding: 8px 16px;
+            border-radius: 30px;
+            background: #1e4a6b;
+            color: white;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: 0.15s;
+            white-space: nowrap;
+        }
+
+        .upload-btn:active {
+            transform: scale(0.95);
+            background: #143a54;
+        }
+
+        /* ─── SPINNER ─── */
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #c8daea;
+            border-top-color: #1e4a6b;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+
+        .spinner.active {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ─── GALLERY GRID ─── */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 4px;
+        }
+
+        /* ─── IMAGE CARD ─── */
+        .image-card {
+            background: #ffffff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 20, 40, 0.06);
+            border: 1px solid rgba(200, 215, 235, 0.2);
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            -webkit-touch-callout: none;
+        }
+
+        .image-card:active {
+            transform: scale(0.98);
+        }
+
+        .image-card.hidden {
+            display: none;
+        }
+
+        .card-img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #eef3fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-body {
+            padding: 10px 12px 14px;
+            background: white;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1a2c3e;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 2rem;
+        }
+
+        .card-title i {
+            color: #6a8ba8;
+            font-size: 0.8rem;
+            width: 1rem;
+            flex-shrink: 0;
+        }
+
+        .card-title .name-display {
+            cursor: pointer;
+            border-bottom: 2px dashed transparent;
+            transition: 0.15s;
+            padding: 0 2px;
+            flex: 1;
+            word-break: break-word;
+            line-height: 1.3;
+            font-size: 0.85rem;
+        }
+
+        .card-title .name-display:active {
+            border-bottom-color: #256a8b;
+            background: #f0f7ff;
+            border-radius: 4px;
+        }
+
+        /* ─── DELETE BUTTON ON CARD ─── */
+        .delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(178, 34, 52, 0.9);
+            backdrop-filter: blur(4px);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 5;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .image-card:hover .delete-btn,
+        .image-card:active .delete-btn {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .delete-btn:active {
+            background: #8f1a2a;
+            transform: scale(0.9);
+        }
+
+        /* ─── EMPTY STATE ─── */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: #f8faff;
+            border-radius: 28px;
+            border: 2px dashed #d0dfef;
+            color: #2f5a7a;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #9ab8d4;
+            margin-bottom: 0.8rem;
+            opacity: 0.6;
+        }
+
+        .empty-state h3 {
+            font-weight: 500;
+            font-size: 1.2rem;
+            color: #1a3a5c;
+        }
+        .empty-state .sub {
+            color: #5a7a97;
+            margin-top: 0.2rem;
+            font-size: 0.9rem;
+        }
+
+        /* ─── BOTTOM NAVIGATION ─── */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(200, 215, 235, 0.3);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 env(safe-area-inset-bottom, 8px);
+            z-index: 200;
+            max-width: 480px;
+            margin: 0 auto;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            background: none;
+            border: none;
+            color: #7a9bb8;
+            font-size: 0.65rem;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 4px 12px;
+            transition: 0.15s;
+            font-family: inherit;
+            -webkit-touch-callout: none;
+            user-select: none;
+            position: relative;
+        }
+
+        .nav-item i {
+            font-size: 1.4rem;
+            transition: 0.15s;
+        }
+
+        .nav-item.active {
+            color: #1e4a6b;
+        }
+
+        .nav-item.active i {
+            transform: translateY(-2px);
+        }
+
+        .nav-item:active {
+            transform: scale(0.92);
+        }
+
+        .nav-item .badge-dot {
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: #b22234;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* ─── MODALS ─── */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 300;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: #ffffff;
+            border-radius: 28px 28px 0 0;
+            padding: 24px 24px 32px;
+            max-width: 480px;
+            width: 100%;
+            animation: slideUp 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideUp {
+            0% {
+                transform: translateY(40px);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal .modal-handle {
+            width: 40px;
+            height: 4px;
+            background: #dde6f0;
+            border-radius: 4px;
+            margin: -8px auto 16px;
+        }
+
+        .modal h2 {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #1a2c3e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .modal h2 i {
+            color: #256a8b;
+        }
+
+        .modal .sub {
+            color: #5a7a97;
+            font-size: 0.9rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .modal .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .modal .form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #1a3a5c;
+            margin-bottom: 4px;
+        }
+
+        .modal .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1.5px solid #dde6f0;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.15s;
+            background: #f8faff;
+            font-family: inherit;
+            -webkit-appearance: none;
+        }
+
+        .modal .form-group input:focus {
+            border-color: #256a8b;
+            box-shadow: 0 0 0 3px rgba(37, 106, 139, 0.08);
+            background: #ffffff;
+        }
+
+        .modal .form-group .hint {
+            font-size: 0.8rem;
+            color: #7a9bb8;
+            margin-top: 4px;
+        }
+
+        .modal .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 1.2rem;
+        }
+
+        .modal .modal-actions .btn {
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: inherit;
+            flex: 1;
+            text-align: center;
+        }
+
+        .modal .modal-actions .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-ghost {
+            background: #eef3fa;
+            color: #1e4a6b;
+        }
+
+        .btn-ghost:active {
+            background: #dde6f2;
+        }
+
+        .btn-danger {
+            background: #b22234;
+            color: white;
+        }
+
+        .btn-danger:active {
+            background: #8f1a2a;
+        }
+
+        .btn-success {
+            background: #1e7a4a;
+            color: white;
+        }
+
+        .btn-success:active {
+            background: #15603a;
+        }
+
+        .btn-primary {
+            background: #1e4a6b;
+            color: white;
+        }
+
+        .btn-primary:active {
+            background: #143a54;
+        }
+
+        .modal .error-msg {
+            color: #b22234;
+            font-size: 0.85rem;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            margin-top: -0.5rem;
+            margin-bottom: 0.8rem;
+            padding: 8px 12px;
+            background: #fde8ea;
+            border-radius: 10px;
+        }
+
+        .modal .error-msg.show {
+            display: flex;
+        }
+
+        .modal .success-msg {
+            color: #1e7a4a;
+            font-size: 0.85rem;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            margin-top: -0.5rem;
+            margin-bottom: 0.8rem;
+            padding: 8px 12px;
+            background: #e6f5ed;
+            border-radius: 10px;
+        }
+
+        .modal .success-msg.show {
+            display: flex;
+        }
+
+        /* ─── TOAST ─── */
+        .toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a2c3e;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            z-index: 400;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .toast.error {
+            background: #a51c2c;
+        }
+        .toast.success {
+            background: #1e7a4a;
+        }
+
+        /* ─── LIGHTBOX ─── */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 18, 30, 0.92);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 250;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 16px;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-content {
+            max-width: 100%;
+            max-height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .lightbox-content img {
+            display: block;
+            max-width: 100%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 16px;
+            background: #0f1a28;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-info {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 20, 35, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            border: none;
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.4rem;
+            transition: 0.15s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .lightbox-close:active {
+            background: rgba(178, 34, 52, 0.8);
+            transform: scale(0.92);
+        }
+
+        body.no-scroll {
+            overflow: hidden;
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 380px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .card-body {
+                padding: 8px 10px 12px;
+            }
+            .card-title {
+                font-size: 0.8rem;
+            }
+            .card-title .name-display {
+                font-size: 0.78rem;
+            }
+            .search-box input {
+                font-size: 0.8rem;
+            }
+            .upload-btn {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+            .icon-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 0.95rem;
+            }
+            .modal {
+                padding: 20px 16px 28px;
+            }
+        }
+
+        @media (min-width: 481px) {
+            .page {
+                max-width: 560px;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+            .bottom-nav {
+                max-width: 560px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .page {
+                max-width: 720px;
+                padding: 0 24px 24px;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 18px;
+            }
+            .bottom-nav {
+                max-width: 720px;
+            }
+            .header {
+                border-radius: 24px;
+                padding: 14px 20px;
+            }
+            .logo h1 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page">
+
+        <!-- ─── HEADER ─── -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-images"></i>
+                <h1>Gallery</h1>
+            </div>
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search..." />
+                    <button class="clear-btn" id="clearSearch"><i class="fas fa-times-circle"></i></button>
+                </div>
+                <span class="spinner" id="loadingSpinner"></span>
+            </div>
+        </header>
+
+        <!-- ─── GALLERY ─── -->
+        <div class="gallery-grid" id="galleryGrid">
+            <div class="empty-state" id="emptyState">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h3>Your gallery is empty</h3>
+                <p class="sub">Tap the + button to upload</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ─── BOTTOM NAVIGATION ─── -->
+    <nav class="bottom-nav" id="bottomNav">
+        <button class="nav-item active" id="navGallery" title="Gallery">
+            <i class="fas fa-th"></i>
+            <span>Gallery</span>
+        </button>
+        <button class="nav-item" id="navUpload" title="Upload">
+            <i class="fas fa-plus-circle"></i>
+            <span>Upload</span>
+        </button>
+        <button class="nav-item" id="navPassword" title="Password">
+            <i class="fas fa-key"></i>
+            <span>Security</span>
+        </button>
+        <button class="nav-item" id="navRefresh" title="Refresh">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+        </button>
+    </nav>
+
+    <!-- ─── HIDDEN FILE INPUT ─── -->
+    <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" />
+
+    <!-- ─── LIGHTBOX ─── -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <img id="lightboxImg" src="" alt="enlarged view" />
+            <div class="lightbox-info" id="lightboxInfo">
+                <i class="fas fa-tag"></i> <span id="lightboxTitle">image</span>
+            </div>
+            <button class="lightbox-close" id="lightboxClose"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- ─── DELETE MODAL ─── -->
+    <div class="modal-overlay" id="deleteModalOverlay">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <h2><i class="fas fa-lock"></i> Delete Image</h2>
+            <p class="sub">Enter password to delete this image.</p>
+            <div class="error-msg" id="deleteError"><i class="fas fa-exclamation-circle"></i> Incorrect password</div>
+            <div class="form-group">
+                <label for="deletePasswordInput">Password</label>
+                <input type="password" id="deletePasswordInput" placeholder="Enter password" autocomplete="off" />
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" id="deleteCancel">Cancel</button>
+                <button class="btn btn-danger" id="deleteConfirm">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── CHANGE PASSWORD MODAL ─── -->
+    <div class="modal-overlay" id="changePasswordModalOverlay">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <h2><i class="fas fa-key"></i> Change Password</h2>
+            <p class="sub">Update the delete password.</p>
+            <div class="error-msg" id="changePasswordError"><i class="fas fa-exclamation-circle"></i> Current password is incorrect</div>
+            <div class="success-msg" id="changePasswordSuccess"><i class="fas fa-check-circle"></i> Password updated!</div>
+            <div class="form-group">
+                <label for="currentPasswordInput">Current Password</label>
+                <input type="password" id="currentPasswordInput" placeholder="Enter current password" autocomplete="off" />
+            </div>
+            <div class="form-group">
+                <label for="newPasswordInput">New Password</label>
+                <input type="password" id="newPasswordInput" placeholder="Enter new password" autocomplete="off" />
+                <div class="hint">Min 6 characters</div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPasswordInput">Confirm New Password</label>
+                <input type="password" id="confirmPasswordInput" placeholder="Confirm new password" autocomplete="off" />
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" id="changePasswordCancel">Cancel</button>
+                <button class="btn btn-success" id="changePasswordConfirm">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── NAME EDIT MODAL ─── -->
+    <div class="modal-overlay" id="nameModalOverlay">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <h2><i class="fas fa-pen"></i> Edit Name</h2>
+            <p class="sub">Give this image a custom name.</p>
+            <div class="form-group">
+                <label for="nameInput">Image Name</label>
+                <input type="text" id="nameInput" placeholder="Enter custom name..." maxlength="100" />
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" id="nameModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="nameModalConfirm">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── TOAST ─── -->
+    <div class="toast" id="toast">
+        <i class="fas fa-info-circle" id="toastIcon"></i>
+        <span id="toastMessage">Loading...</span>
+    </div>
+
+    <script>
+        (function() {
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  SUPABASE CONFIG
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            const SUPABASE_URL = 'https://kptuueqfchrtirzhkmtz.supabase.co';
+            const SUPABASE_ANON_KEY =
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwdHV1ZXFmY2hydGlyemhrbXR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2OTYxNDcsImV4cCI6MjEwMjI3MjE0N30.yuAh4DWMjmjpa2FpLw_LPMYPBbQZdu_YkdSKyTwnlZo';
+            const STORAGE_BUCKET = 'gallery';
+
+            let DELETE_PASSWORD = null;
+            let supabase = null;
+
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    auth: { persistSession: false, autoRefreshToken: false }
+                });
+                console.log('✅ Supabase initialized');
+            } catch (e) {
+                console.error('❌ Supabase init failed:', e.message);
+                showToast('⚠️ ' + e.message, 'error');
+            }
+
+            // ─── DOM REFS ───
+            const $ = id => document.getElementById(id);
+            const fileInput = $('fileInput');
+            const galleryGrid = $('galleryGrid');
+            const emptyState = $('emptyState');
+            const loadingSpinner = $('loadingSpinner');
+            const searchInput = $('searchInput');
+            const clearSearch = $('clearSearch');
+
+            // Navigation
+            const navGallery = $('navGallery');
+            const navUpload = $('navUpload');
+            const navPassword = $('navPassword');
+            const navRefresh = $('navRefresh');
+
+            // Lightbox
+            const lightbox = $('lightbox');
+            const lightboxImg = $('lightboxImg');
+            const lightboxTitle = $('lightboxTitle');
+            const lightboxClose = $('lightboxClose');
+
+            // Delete modal
+            const deleteModalOverlay = $('deleteModalOverlay');
+            const deletePasswordInput = $('deletePasswordInput');
+            const deleteError = $('deleteError');
+            const deleteCancel = $('deleteCancel');
+            const deleteConfirm = $('deleteConfirm');
+
+            // Change password modal
+            const changePasswordModalOverlay = $('changePasswordModalOverlay');
+            const currentPasswordInput = $('currentPasswordInput');
+            const newPasswordInput = $('newPasswordInput');
+            const confirmPasswordInput = $('confirmPasswordInput');
+            const changePasswordError = $('changePasswordError');
+            const changePasswordSuccess = $('changePasswordSuccess');
+            const changePasswordCancel = $('changePasswordCancel');
+            const changePasswordConfirm = $('changePasswordConfirm');
+
+            // Name modal
+            const nameModalOverlay = $('nameModalOverlay');
+            const nameInput = $('nameInput');
+            const nameModalCancel = $('nameModalCancel');
+            const nameModalConfirm = $('nameModalConfirm');
+
+            // Toast
+            const toast = $('toast');
+            const toastMessage = $('toastMessage');
+            const toastIcon = $('toastIcon');
+
+            // ─── STATE ───
+            let pendingCard = null;
+            let pendingImageId = null;
+            let pendingFilePath = null;
+            let pendingNameCard = null;
+            let imageNames = {};
+            let toastTimeout = null;
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  TOAST
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function showToast(message, type = 'info') {
+                toastMessage.textContent = message;
+                toast.className = 'toast';
+                if (type === 'error') {
+                    toast.classList.add('error');
+                    toastIcon.className = 'fas fa-exclamation-circle';
+                } else if (type === 'success') {
+                    toast.classList.add('success');
+                    toastIcon.className = 'fas fa-check-circle';
+                } else {
+                    toastIcon.className = 'fas fa-info-circle';
+                }
+                toast.classList.add('show');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  LOAD PASSWORD
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            async function loadPassword() {
+                try {
+                    const { data, error } = await supabase
+                        .from('config')
+                        .select('value')
+                        .eq('key', 'delete_password')
+                        .single();
+
+                    if (error) {
+                        if (error.message.includes('does not exist') || error.code === '42P01') {
+                            console.log('📝 Creating config table...');
+                            try {
+                                const { error: insertError } = await supabase
+                                    .from('config')
+                                    .insert({ key: 'delete_password', value: '530194706Kcst##' });
+                                if (insertError) {
+                                    showToast('⚠️ Please create config table in Supabase', 'error');
+                                } else {
+                                    DELETE_PASSWORD = '530194706Kcst##';
+                                    console.log('✅ Config created');
+                                }
+                            } catch (e) { showToast('⚠️ Please run SQL setup', 'error'); }
+                        }
+                        return;
+                    }
+
+                    DELETE_PASSWORD = data?.value || null;
+                    if (DELETE_PASSWORD) console.log('🔑 Password loaded');
+                } catch (e) {
+                    console.warn('⚠️ Error loading password:', e.message);
+                }
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  UPDATE PASSWORD
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            async function updatePassword(currentPwd, newPwd) {
+                if (!supabase) return { success: false, message: 'Supabase not initialized' };
+                if (currentPwd !== DELETE_PASSWORD) return { success: false, message: 'Current password is incorrect' };
+                if (newPwd.length < 6) return { success: false, message: 'Min 6 characters' };
+
+                try {
+                    const { error } = await supabase
+                        .from('config')
+                        .update({ value: newPwd })
+                        .eq('key', 'delete_password');
+
+                    if (error) return { success: false, message: 'Failed: ' + error.message };
+                    DELETE_PASSWORD = newPwd;
+                    return { success: true, message: 'Password updated!' };
+                } catch (e) {
+                    return { success: false, message: 'Error: ' + e.message };
+                }
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  UI HELPERS
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function updateUI() {
+                const cards = galleryGrid.querySelectorAll('.image-card');
+                const empty = document.getElementById('emptyState');
+                if (cards.length === 0) {
+                    if (!empty) {
+                        const newEmpty = document.createElement('div');
+                        newEmpty.className = 'empty-state';
+                        newEmpty.id = 'emptyState';
+                        newEmpty.innerHTML = `
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3>Your gallery is empty</h3>
+                            <p class="sub">Tap the + button to upload</p>
+                        `;
+                        galleryGrid.appendChild(newEmpty);
+                    } else {
+                        empty.style.display = '';
+                    }
+                } else {
+                    if (empty) empty.style.display = 'none';
+                }
+            }
+
+            function setLoading(loading) {
+                loadingSpinner.classList.toggle('active', loading);
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  SEARCH
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function filterImages(term) {
+                const cards = galleryGrid.querySelectorAll('.image-card');
+                const query = term.toLowerCase().trim();
+                let visible = 0;
+
+                cards.forEach(card => {
+                    const name = (card.dataset.customName || '').toLowerCase();
+                    const match = query === '' || name.includes(query);
+                    card.classList.toggle('hidden', !match);
+                    if (match) visible++;
+                });
+
+                clearSearch.style.display = query ? 'block' : 'none';
+
+                let noResults = document.getElementById('noResults');
+                if (visible === 0 && cards.length > 0) {
+                    if (!noResults) {
+                        noResults = document.createElement('div');
+                        noResults.className = 'empty-state';
+                        noResults.id = 'noResults';
+                        noResults.innerHTML = `
+                            <i class="fas fa-search"></i>
+                            <h3>No results</h3>
+                            <p class="sub">Try a different search term</p>
+                        `;
+                        galleryGrid.appendChild(noResults);
+                    } else {
+                        noResults.style.display = '';
+                    }
+                } else {
+                    if (noResults) noResults.style.display = 'none';
+                }
+            }
+
+            searchInput.addEventListener('input', () => filterImages(searchInput.value));
+            clearSearch.addEventListener('click', () => {
+                searchInput.value = '';
+                filterImages('');
+                clearSearch.style.display = 'none';
+            });
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  LIGHTBOX
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function openLightbox(src, title) {
+                lightboxImg.src = src;
+                lightboxTitle.textContent = title || 'Image';
+                lightbox.classList.add('active');
+                document.body.classList.add('no-scroll');
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            }
+
+            lightboxClose.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+            });
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  NAME EDITING
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function openNameEditor(card) {
+                pendingNameCard = card;
+                nameInput.value = card.dataset.customName || '';
+                nameModalOverlay.classList.add('active');
+                document.body.classList.add('no-scroll');
+                setTimeout(() => nameInput.focus(), 300);
+                nameInput.select();
+            }
+
+            function closeNameEditor() {
+                nameModalOverlay.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+                pendingNameCard = null;
+            }
+
+            function saveName() {
+                if (!pendingNameCard) return;
+                const newName = nameInput.value.trim() || 'Untitled';
+                pendingNameCard.dataset.customName = newName;
+                const display = pendingNameCard.querySelector('.name-display');
+                if (display) display.textContent = newName;
+
+                const path = pendingNameCard.dataset.filePath;
+                if (path) {
+                    imageNames[path] = newName;
+                    try { localStorage.setItem('image_names', JSON.stringify(imageNames)); } catch (e) {}
+                }
+
+                closeNameEditor();
+                showToast('✅ Name updated', 'success');
+                if (searchInput.value) filterImages(searchInput.value);
+            }
+
+            nameModalCancel.addEventListener('click', closeNameEditor);
+            nameModalConfirm.addEventListener('click', saveName);
+            nameInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') saveName();
+                if (e.key === 'Escape') closeNameEditor();
+            });
+            nameModalOverlay.addEventListener('click', e => {
+                if (e.target === nameModalOverlay) closeNameEditor();
+            });
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  CREATE CARD
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            function createCardFromData(imageData) {
+                const { id, name, url } = imageData;
+                try {
+                    const saved = localStorage.getItem('image_names');
+                    if (saved) imageNames = JSON.parse(saved);
+                } catch (e) {}
+
+                const customName = imageNames[name] || name.replace(/\.[^.]+$/, '').replace(/^\d+_/, '');
+
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                card.dataset.imageId = id;
+                card.dataset.filePath = name;
+                card.dataset.fileName = name;
+                card.dataset.customName = customName;
+
+                // Delete button
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-btn';
+                delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                delBtn.setAttribute('aria-label', 'Delete image');
+                delBtn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    pendingCard = card;
+                    pendingImageId = id;
+                    pendingFilePath = name;
+                    deletePasswordInput.value = '';
+                    deleteError.classList.remove('show');
+                    deleteModalOverlay.classList.add('active');
+                    document.body.classList.add('no-scroll');
+                    setTimeout(() => deletePasswordInput.focus(), 300);
+                });
+                card.appendChild(delBtn);
+
+                // Image
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'card-img';
+                const img = document.createElement('img');
+                img.alt = customName;
+                img.src = url;
+                img.loading = 'lazy';
+                imgContainer.appendChild(img);
+                card.appendChild(imgContainer);
+
+                // Body
+                const body = document.createElement('div');
+                body.className = 'card-body';
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'card-title';
+                titleDiv.innerHTML = `
+                    <i class="fas fa-tag"></i>
+                    <span class="name-display editable-name">${customName}</span>
+                `;
+                titleDiv.querySelector('.name-display').addEventListener('click', e => {
+                    e.stopPropagation();
+                    openNameEditor(card);
+                });
+                body.appendChild(titleDiv);
+                card.appendChild(body);
+
+                // Enlarge on click
+                imgContainer.addEventListener('click', () => openLightbox(url, customName));
+
+                return card;
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  LOAD IMAGES
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            async function loadImages() {
+                if (!supabase) { showToast('⚠️ Supabase not initialized', 'error'); return; }
+                setLoading(true);
+                try {
+                    const { data: files, error } = await supabase.storage.from(STORAGE_BUCKET).list();
+                    if (error) {
+                        let msg = error.message;
+                        if (msg.includes('Bucket not found')) msg = 'Bucket not found. Create it in Storage.';
+                        else if (msg.includes('permission') || msg.includes('403')) msg = 'Permission denied. Make bucket public.';
+                        showToast('❌ ' + msg, 'error');
+                        setLoading(false);
+                        return;
+                    }
+
+                    document.querySelectorAll('.image-card').forEach(c => c.remove());
+                    const noRes = document.getElementById('noResults');
+                    if (noRes) noRes.remove();
+
+                    if (!files || files.length === 0) {
+                        updateUI();
+                        setLoading(false);
+                        return;
+                    }
+
+                    const imageFiles = files.filter(f => {
+                        const ext = f.name.split('.').pop()?.toLowerCase();
+                        return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext);
+                    });
+
+                    if (imageFiles.length === 0) {
+                        updateUI();
+                        setLoading(false);
+                        return;
+                    }
+
+                    for (const file of imageFiles) {
+                        const { data: urlData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(file.name);
+                        const card = createCardFromData({
+                            id: file.id,
+                            name: file.name,
+                            url: urlData.publicUrl
+                        });
+                        galleryGrid.appendChild(card);
+                    }
+
+                    updateUI();
+                    setLoading(false);
+                    if (searchInput.value) filterImages(searchInput.value);
+
+                } catch (err) {
+                    showToast('❌ Error loading: ' + err.message, 'error');
+                    setLoading(false);
+                }
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  UPLOAD
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            async function uploadImages(files) {
+                if (!supabase) { showToast('⚠️ Supabase not initialized', 'error'); return; }
+                const imageFiles = [...files].filter(f => f.type.startsWith('image/'));
+                if (!imageFiles.length) { showToast('No image files selected', 'error'); return; }
+
+                setLoading(true);
+                let uploaded = 0,
+                    failed = 0;
+
+                for (const file of imageFiles) {
+                    let customName = prompt(`Name for "${file.name}":`, file.name.replace(/\.[^.]+$/, '').replace(/^\d+_/, ''));
+                    if (customName === null) customName = file.name.replace(/\.[^.]+$/, '').replace(/^\d+_/, '');
+                    if (!customName.trim()) customName = file.name.replace(/\.[^.]+$/, '').replace(/^\d+_/, '');
+
+                    const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                    const fileName = `${Date.now()}_${cleanName}`;
+
+                    try {
+                        const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(fileName, file, {
+                            cacheControl: '3600',
+                            upsert: false
+                        });
+                        if (error) { failed++; continue; }
+
+                        imageNames[fileName] = customName;
+                        try { localStorage.setItem('image_names', JSON.stringify(imageNames)); } catch (e) {}
+                        uploaded++;
+                    } catch (e) { failed++; }
+                }
+
+                setLoading(false);
+                if (uploaded > 0) {
+                    showToast(`✅ Uploaded ${uploaded} image(s)${failed ? ', ' + failed + ' failed' : ''}`, 'success');
+                    await loadImages();
+                } else {
+                    showToast('❌ No images uploaded', 'error');
+                }
+                fileInput.value = '';
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  DELETE
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            async function confirmDelete() {
+                const entered = deletePasswordInput.value;
+
+                if (!DELETE_PASSWORD) {
+                    await loadPassword();
+                    if (!DELETE_PASSWORD) {
+                        showToast('⚠️ Password not loaded', 'error');
+                        return;
+                    }
+                }
+
+                if (entered !== DELETE_PASSWORD) {
+                    deleteError.classList.add('show');
+                    deletePasswordInput.value = '';
+                    deletePasswordInput.focus();
+                    return;
+                }
+
+                if (!pendingFilePath) { showToast('No file to delete', 'error');
+                    cancelDelete(); return; }
+
+                deleteConfirm.disabled = true;
+                deleteConfirm.textContent = 'Deleting...';
+
+                try {
+                    const { error } = await supabase.storage.from(STORAGE_BUCKET).remove([pendingFilePath]);
+                    if (error) {
+                        showToast('❌ Delete failed: ' + error.message, 'error');
+                        deleteConfirm.disabled = false;
+                        deleteConfirm.textContent = 'Delete';
+                        return;
+                    }
+
+                    delete imageNames[pendingFilePath];
+                    try { localStorage.setItem('image_names', JSON.stringify(imageNames)); } catch (e) {}
+
+                    if (pendingCard && pendingCard.parentNode) pendingCard.remove();
+                    updateUI();
+                    cancelDelete();
+                    showToast('✅ Image deleted', 'success');
+                    if (searchInput.value) filterImages(searchInput.value);
+                } catch (e) {
+                    showToast('❌ Error: ' + e.message, 'error');
+                }
+
+                deleteConfirm.disabled = false;
+                deleteConfirm.textContent = 'Delete';
+            }
+
+            function cancelDelete() {
+                deleteModalOverlay.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+                pendingCard = null;
+                pendingImageId = null;
+                pendingFilePath = null;
+                deletePasswordInput.value = '';
+                deleteError.classList.remove('show');
+            }
+
+            deleteCancel.addEventListener('click', cancelDelete);
+            deleteConfirm.addEventListener('click', confirmDelete);
+            deletePasswordInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') confirmDelete();
+                if (e.key === 'Escape') cancelDelete();
+            });
+            deleteModalOverlay.addEventListener('click', e => {
+                if (e.target === deleteModalOverlay) cancelDelete();
+            });
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  CHANGE PASSWORD
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            async function handleChangePassword() {
+                const current = currentPasswordInput.value;
+                const newPwd = newPasswordInput.value;
+                const confirm = confirmPasswordInput.value;
+
+                changePasswordError.classList.remove('show');
+                changePasswordSuccess.classList.remove('show');
+
+                if (newPwd !== confirm) {
+                    changePasswordError.textContent = 'Passwords do not match';
+                    changePasswordError.classList.add('show');
+                    return;
+                }
+
+                if (newPwd.length < 6) {
+                    changePasswordError.textContent = 'Min 6 characters';
+                    changePasswordError.classList.add('show');
+                    return;
+                }
+
+                const result = await updatePassword(current, newPwd);
+                if (result.success) {
+                    changePasswordSuccess.textContent = result.message;
+                    changePasswordSuccess.classList.add('show');
+                    currentPasswordInput.value = '';
+                    newPasswordInput.value = '';
+                    confirmPasswordInput.value = '';
+                    showToast('✅ ' + result.message, 'success');
+                    setTimeout(() => {
+                        changePasswordModalOverlay.classList.remove('active');
+                        document.body.classList.remove('no-scroll');
+                    }, 800);
+                } else {
+                    changePasswordError.textContent = result.message;
+                    changePasswordError.classList.add('show');
+                }
+            }
+
+            function openChangePassword() {
+                currentPasswordInput.value = '';
+                newPasswordInput.value = '';
+                confirmPasswordInput.value = '';
+                changePasswordError.classList.remove('show');
+                changePasswordSuccess.classList.remove('show');
+                changePasswordModalOverlay.classList.add('active');
+                document.body.classList.add('no-scroll');
+                setTimeout(() => currentPasswordInput.focus(), 300);
+            }
+
+            function closeChangePassword() {
+                changePasswordModalOverlay.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            }
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  NAVIGATION
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            navGallery.addEventListener('click', () => {
+                navGallery.classList.add('active');
+                navUpload.classList.remove('active');
+                navPassword.classList.remove('active');
+                navRefresh.classList.remove('active');
+                searchInput.focus();
+            });
+
+            navUpload.addEventListener('click', () => {
+                navUpload.classList.add('active');
+                navGallery.classList.remove('active');
+                navPassword.classList.remove('active');
+                navRefresh.classList.remove('active');
+                fileInput.click();
+                setTimeout(() => {
+                    navGallery.classList.add('active');
+                    navUpload.classList.remove('active');
+                }, 500);
+            });
+
+            navPassword.addEventListener('click', () => {
+                navPassword.classList.add('active');
+                navGallery.classList.remove('active');
+                navUpload.classList.remove('active');
+                navRefresh.classList.remove('active');
+                openChangePassword();
+                setTimeout(() => {
+                    navGallery.classList.add('active');
+                    navPassword.classList.remove('active');
+                }, 500);
+            });
+
+            navRefresh.addEventListener('click', () => {
+                navRefresh.classList.add('active');
+                navGallery.classList.remove('active');
+                navUpload.classList.remove('active');
+                navPassword.classList.remove('active');
+                loadImages();
+                setTimeout(() => {
+                    navGallery.classList.add('active');
+                    navRefresh.classList.remove('active');
+                }, 500);
+            });
+
+            // ─── File Input ───
+            fileInput.addEventListener('change', e => { if (e.target.files.length) uploadImages(e.target.files); });
+
+            // ─── Drag & Drop ───
+            document.addEventListener('dragover', e => e.preventDefault());
+            document.addEventListener('drop', e => {
+                e.preventDefault();
+                const files = e.dataTransfer.files;
+                if (files.length) uploadImages(files);
+            });
+
+            // ─── Password Modal ───
+            changePasswordCancel.addEventListener('click', closeChangePassword);
+            changePasswordConfirm.addEventListener('click', handleChangePassword);
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    if (changePasswordModalOverlay.classList.contains('active')) closeChangePassword();
+                    if (nameModalOverlay.classList.contains('active')) closeNameEditor();
+                    if (deleteModalOverlay.classList.contains('active')) cancelDelete();
+                    if (lightbox.classList.contains('active')) closeLightbox();
+                }
+            });
+
+            // ─── Keyboard shortcuts ───
+            document.addEventListener('keydown', e => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            });
+
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            //  INIT
+            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            async function init() {
+                await loadPassword();
+                if (DELETE_PASSWORD) {
+                    console.log('🔑 Password loaded');
+                } else {
+                    console.warn('⚠️ No password found');
+                }
+                updateUI();
+                await loadImages();
+                console.log('✅ Gallery Mobile ready!');
+            }
+
+            init();
+
+            window.__gallery = { loadImages, uploadImages, supabase, filterImages };
+
+        })();
+    </script>
+
+</body>
+</html>
