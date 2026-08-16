@@ -431,12 +431,26 @@
             word-break: break-word;
             line-height: 1.3;
             font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .card-title .name-display:hover {
             border-bottom-color: #256a8b;
             background: #f0f7ff;
             border-radius: 4px;
+        }
+
+        .card-title .name-display .edit-icon {
+            font-size: 0.65rem;
+            color: #9ab0c7;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .card-title .name-display:hover .edit-icon {
+            opacity: 1;
         }
 
         .card-title .name-display:active {
@@ -1115,6 +1129,11 @@
                 font-size: 0.78rem;
             }
 
+            .card-title .name-display .edit-icon {
+                opacity: 1;
+                font-size: 0.6rem;
+            }
+
             .delete-btn {
                 width: 30px;
                 height: 30px;
@@ -1279,6 +1298,28 @@
         </div>
     </div>
 
+    <!-- ─── RENAME MODAL (Password Protected) ─── -->
+    <div class="modal-overlay" id="renameModalOverlay">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <h2><i class="fas fa-pen"></i> Rename Image</h2>
+            <p class="sub">Enter password to rename this image.</p>
+            <div class="error-msg" id="renameError"><i class="fas fa-exclamation-circle"></i> Incorrect password</div>
+            <div class="form-group">
+                <label for="renamePasswordInput">Password</label>
+                <input type="password" id="renamePasswordInput" placeholder="Enter password" autocomplete="off" />
+            </div>
+            <div class="form-group">
+                <label for="renameNameInput">New Name</label>
+                <input type="text" id="renameNameInput" placeholder="Enter new name..." maxlength="100" />
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" id="renameCancel">Cancel</button>
+                <button class="btn btn-primary" id="renameConfirm">Rename</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ─── CHANGE PASSWORD MODAL ─── -->
     <div class="modal-overlay" id="changePasswordModalOverlay">
         <div class="modal">
@@ -1303,23 +1344,6 @@
             <div class="modal-actions">
                 <button class="btn btn-ghost" id="changePasswordCancel">Cancel</button>
                 <button class="btn btn-success" id="changePasswordConfirm">Update</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ─── NAME EDIT MODAL ─── -->
-    <div class="modal-overlay" id="nameModalOverlay">
-        <div class="modal">
-            <div class="modal-handle"></div>
-            <h2><i class="fas fa-pen"></i> Edit Name</h2>
-            <p class="sub">Give this image a custom name.</p>
-            <div class="form-group">
-                <label for="nameInput">Image Name</label>
-                <input type="text" id="nameInput" placeholder="Enter custom name..." maxlength="100" />
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-ghost" id="nameModalCancel">Cancel</button>
-                <button class="btn btn-primary" id="nameModalConfirm">Save</button>
             </div>
         </div>
     </div>
@@ -1383,6 +1407,14 @@
             const deleteCancel = $('deleteCancel');
             const deleteConfirm = $('deleteConfirm');
 
+            // Rename modal (password protected)
+            const renameModalOverlay = $('renameModalOverlay');
+            const renamePasswordInput = $('renamePasswordInput');
+            const renameNameInput = $('renameNameInput');
+            const renameError = $('renameError');
+            const renameCancel = $('renameCancel');
+            const renameConfirm = $('renameConfirm');
+
             // Change password modal
             const changePasswordModalOverlay = $('changePasswordModalOverlay');
             const currentPasswordInput = $('currentPasswordInput');
@@ -1393,12 +1425,6 @@
             const changePasswordCancel = $('changePasswordCancel');
             const changePasswordConfirm = $('changePasswordConfirm');
 
-            // Name modal
-            const nameModalOverlay = $('nameModalOverlay');
-            const nameInput = $('nameInput');
-            const nameModalCancel = $('nameModalCancel');
-            const nameModalConfirm = $('nameModalConfirm');
-
             // Toast
             const toast = $('toast');
             const toastMessage = $('toastMessage');
@@ -1408,7 +1434,7 @@
             let pendingCard = null;
             let pendingImageId = null;
             let pendingFilePath = null;
-            let pendingNameCard = null;
+            let pendingRenameCard = null;
             let imageNames = {};
             let toastTimeout = null;
 
@@ -1585,49 +1611,93 @@
             });
 
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            //  NAME EDITING
+            //  RENAME (Password Protected)
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            function openNameEditor(card) {
-                pendingNameCard = card;
-                nameInput.value = card.dataset.customName || '';
-                nameModalOverlay.classList.add('active');
+            function openRenameModal(card) {
+                pendingRenameCard = card;
+                const currentName = card.dataset.customName || '';
+                renameNameInput.value = currentName;
+                renamePasswordInput.value = '';
+                renameError.classList.remove('show');
+                renameModalOverlay.classList.add('active');
                 document.body.classList.add('no-scroll');
-                setTimeout(() => nameInput.focus(), 300);
-                nameInput.select();
+                setTimeout(() => renamePasswordInput.focus(), 300);
             }
 
-            function closeNameEditor() {
-                nameModalOverlay.classList.remove('active');
+            function closeRenameModal() {
+                renameModalOverlay.classList.remove('active');
                 document.body.classList.remove('no-scroll');
-                pendingNameCard = null;
+                pendingRenameCard = null;
+                renamePasswordInput.value = '';
+                renameNameInput.value = '';
+                renameError.classList.remove('show');
             }
 
-            function saveName() {
-                if (!pendingNameCard) return;
-                const newName = nameInput.value.trim() || 'Untitled';
-                pendingNameCard.dataset.customName = newName;
-                const display = pendingNameCard.querySelector('.name-display');
-                if (display) display.textContent = newName;
+            async function confirmRename() {
+                const enteredPassword = renamePasswordInput.value;
 
-                const path = pendingNameCard.dataset.filePath;
+                if (!DELETE_PASSWORD) {
+                    await loadPassword();
+                    if (!DELETE_PASSWORD) {
+                        showToast('⚠️ Password not loaded', 'error');
+                        return;
+                    }
+                }
+
+                if (enteredPassword !== DELETE_PASSWORD) {
+                    renameError.classList.add('show');
+                    renamePasswordInput.value = '';
+                    renamePasswordInput.focus();
+                    return;
+                }
+
+                if (!pendingRenameCard) {
+                    closeRenameModal();
+                    return;
+                }
+
+                const newName = renameNameInput.value.trim() || 'Untitled';
+
+                // Update the card
+                pendingRenameCard.dataset.customName = newName;
+                const display = pendingRenameCard.querySelector('.name-display');
+                if (display) {
+                    // Keep the edit icon
+                    display.innerHTML = `${newName} <i class="fas fa-pen edit-icon"></i>`;
+                }
+
+                const path = pendingRenameCard.dataset.filePath;
                 if (path) {
                     imageNames[path] = newName;
                     try { localStorage.setItem('image_names', JSON.stringify(imageNames)); } catch (e) {}
                 }
 
-                closeNameEditor();
-                showToast('✅ Name updated', 'success');
+                closeRenameModal();
+                showToast('✅ Image renamed successfully', 'success');
                 if (searchInput.value) filterImages(searchInput.value);
             }
 
-            nameModalCancel.addEventListener('click', closeNameEditor);
-            nameModalConfirm.addEventListener('click', saveName);
-            nameInput.addEventListener('keydown', e => {
-                if (e.key === 'Enter') saveName();
-                if (e.key === 'Escape') closeNameEditor();
+            renameCancel.addEventListener('click', closeRenameModal);
+            renameConfirm.addEventListener('click', confirmRename);
+
+            renamePasswordInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    renameNameInput.focus();
+                }
+                if (e.key === 'Escape') closeRenameModal();
             });
-            nameModalOverlay.addEventListener('click', e => {
-                if (e.target === nameModalOverlay) closeNameEditor();
+
+            renameNameInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    confirmRename();
+                }
+                if (e.key === 'Escape') closeRenameModal();
+            });
+
+            renameModalOverlay.addEventListener('click', e => {
+                if (e.target === renameModalOverlay) closeRenameModal();
             });
 
             // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1684,11 +1754,11 @@
                 titleDiv.className = 'card-title';
                 titleDiv.innerHTML = `
                     <i class="fas fa-tag"></i>
-                    <span class="name-display editable-name">${customName}</span>
+                    <span class="name-display editable-name">${customName} <i class="fas fa-pen edit-icon"></i></span>
                 `;
                 titleDiv.querySelector('.name-display').addEventListener('click', e => {
                     e.stopPropagation();
-                    openNameEditor(card);
+                    openRenameModal(card);
                 });
                 body.appendChild(titleDiv);
                 card.appendChild(body);
@@ -2000,7 +2070,7 @@
             document.addEventListener('keydown', e => {
                 if (e.key === 'Escape') {
                     if (changePasswordModalOverlay.classList.contains('active')) closeChangePassword();
-                    if (nameModalOverlay.classList.contains('active')) closeNameEditor();
+                    if (renameModalOverlay.classList.contains('active')) closeRenameModal();
                     if (deleteModalOverlay.classList.contains('active')) cancelDelete();
                     if (lightbox.classList.contains('active')) closeLightbox();
                 }
