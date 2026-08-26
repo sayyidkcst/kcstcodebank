@@ -1,3 +1,7 @@
+[file name]: Pasted text.txt
+[file content begin]
+add new button for Accounting Quiz (https://sites.google.com/view/kcst-service/accounting-quiz)
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,6 +45,7 @@
       --gradient-refresh: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
       --gradient-gallery: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
       --gradient-whatsapp: linear-gradient(135deg, #075e54 0%, #25D366 100%);
+      --gradient-quiz: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%); /* New gradient for quiz */
     }
 
     body {
@@ -311,6 +316,39 @@
 
     .btn-whatsapp i {
       font-size: 16px;
+    }
+    
+    /* ---------- NEW ACCOUNTING QUIZ BUTTON ---------- */
+    .btn-quiz {
+      background: var(--gradient-quiz);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .btn-quiz:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+    }
+
+    .btn-quiz:active {
+      transform: scale(0.97);
+    }
+
+    .btn-quiz i {
+      font-size: 14px;
     }
 
     /* ============== GRID LAYOUT (DESKTOP & RESPONSIVE) ============= */
@@ -700,6 +738,11 @@
       .whatsapp-popup .wa-qr-container #qrcode canvas {
         max-width: 120px;
       }
+      /* Responsive Quiz Button */
+      .btn-quiz {
+        width: 100%;
+        justify-content: center;
+      }
     }
 
     @media (min-width: 1200px) {
@@ -772,6 +815,11 @@ behavior ="alternate"
         <button class="btn-whatsapp" id="whatsappBtn">
           <i class="fab fa-whatsapp"></i> WhatsApp
         </button>
+        
+        <!-- NEW ACCOUNTING QUIZ BUTTON -->
+        <a href="https://sites.google.com/view/kcst-service/accounting-quiz" target="_blank" class="btn-quiz">
+          <i class="fas fa-puzzle-piece"></i> Accounting Quiz
+        </a>
 
         <!-- Refresh button -->
         <button class="btn-modern btn-refresh" id="refreshListBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
@@ -1253,3 +1301,4 @@ behavior ="alternate"
   </script>
 </body>
 </html>
+[file content end]
