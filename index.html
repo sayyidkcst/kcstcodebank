@@ -41,7 +41,8 @@
       --gradient-refresh: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
       --gradient-gallery: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
       --gradient-whatsapp: linear-gradient(135deg, #075e54 0%, #25D366 100%);
-      --gradient-quiz: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%); /* New gradient for quiz */
+      --gradient-quiz: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%); /* Gradient for quiz */
+      --gradient-exam: linear-gradient(135deg, #e11d48 0%, #fb7185 100%); /* NEW: Gradient for exam button */
     }
 
     body {
@@ -314,7 +315,7 @@
       font-size: 16px;
     }
     
-    /* ---------- NEW ACCOUNTING QUIZ BUTTON ---------- */
+    /* ---------- ACCOUNTING QUIZ BUTTON ---------- */
     .btn-quiz {
       background: var(--gradient-quiz);
       border: none;
@@ -344,6 +345,39 @@
     }
 
     .btn-quiz i {
+      font-size: 14px;
+    }
+
+    /* ---------- NEW: REPEATED EXAM QUESTIONS BUTTON ---------- */
+    .btn-exam {
+      background: var(--gradient-exam);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .btn-exam:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(225, 29, 72, 0.4);
+    }
+
+    .btn-exam:active {
+      transform: scale(0.97);
+    }
+
+    .btn-exam i {
       font-size: 14px;
     }
 
@@ -734,8 +768,8 @@
       .whatsapp-popup .wa-qr-container #qrcode canvas {
         max-width: 120px;
       }
-      /* Responsive Quiz Button */
-      .btn-quiz {
+      /* Responsive buttons */
+      .btn-quiz, .btn-exam {
         width: 100%;
         justify-content: center;
       }
@@ -812,9 +846,14 @@ behavior ="alternate"
           <i class="fab fa-whatsapp"></i> WhatsApp
         </button>
         
-        <!-- NEW ACCOUNTING QUIZ BUTTON -->
+        <!-- ACCOUNTING QUIZ BUTTON -->
         <a href="https://sites.google.com/view/kcst-service/accounting-quiz" target="_blank" class="btn-quiz">
           <i class="fas fa-puzzle-piece"></i> Accounting Quiz
+        </a>
+
+        <!-- NEW: REPEATED EXAM QUESTIONS BUTTON -->
+        <a href="https://sites.google.com/view/kcst-service/exam" target="_blank" class="btn-exam">
+          <i class="fas fa-book-open"></i> Repeated Exam Questions
         </a>
 
         <!-- Refresh button -->
