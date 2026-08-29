@@ -41,8 +41,9 @@
       --gradient-refresh: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
       --gradient-gallery: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
       --gradient-whatsapp: linear-gradient(135deg, #075e54 0%, #25D366 100%);
-      --gradient-quiz: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%); /* Gradient for quiz */
-      --gradient-exam: linear-gradient(135deg, #e11d48 0%, #fb7185 100%); /* NEW: Gradient for exam button */
+      --gradient-quiz: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+      --gradient-exam: linear-gradient(135deg, #e11d48 0%, #fb7185 100%);
+      --gradient-top: linear-gradient(135deg, #1e4a8a 0%, #4a90e2 100%);
     }
 
     body {
@@ -53,7 +54,7 @@
       padding-bottom: 32px;
     }
 
-    /* modern app bar */
+    /* modern app bar - NO STICKY */
     .app-bar {
       background: var(--gradient-primary);
       backdrop-filter: blur(2px);
@@ -63,9 +64,9 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 110;
+      /* position: sticky; REMOVED */
+      /* top: 0; REMOVED */
+      /* z-index: 110; REMOVED */
       box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
     }
 
@@ -348,7 +349,7 @@
       font-size: 14px;
     }
 
-    /* ---------- NEW: REPEATED EXAM QUESTIONS BUTTON ---------- */
+    /* ---------- REPEATED EXAM QUESTIONS BUTTON ---------- */
     .btn-exam {
       background: var(--gradient-exam);
       border: none;
@@ -702,18 +703,51 @@
       background: #d1d5db;
     }
 
+    /* ========== BACK TO TOP BUTTON ========== */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--gradient-top);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 16px rgba(30, 74, 138, 0.4);
+      cursor: pointer;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .back-to-top:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 24px rgba(30, 74, 138, 0.5);
+    }
+
+    .back-to-top:active {
+      transform: scale(0.92);
+    }
+
+    /* ========== RESPONSIVE: ALL IN ONE LINE ========== */
     @media (max-width: 680px) {
       .codes-grid {
         grid-template-columns: 1fr;
         gap: 18px;
-      }
-      .combo-select {
-        width: 100%;
-        min-width: unset;
-      }
-      .btn-gallery {
-        width: 100%;
-        justify-content: center;
       }
       .btn-modern {
         padding: 8px 18px;
@@ -726,26 +760,127 @@
         flex-direction: column;
         align-items: stretch;
       }
+      
+      /* EVERYTHING in ONE LINE - buttons + combo + gallery */
       .btn-group {
-        flex-direction: column;
-        width: 100%;
-      }
-      .btn-group .btn-modern {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
         width: 100%;
         justify-content: center;
+        align-items: center;
+        gap: 5px;
+        overflow-x: auto;
+        padding: 4px 0;
+        -webkit-overflow-scrolling: touch;
       }
+      
+      /* Make ALL action buttons icon-only with PERFECT CIRCLE shape */
+      .btn-group .btn-modern,
+      .btn-group .btn-gallery,
+      .btn-group .btn-whatsapp,
+      .btn-group .btn-quiz,
+      .btn-group .btn-exam {
+        padding: 0 !important;
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        min-height: 36px;
+        justify-content: center;
+        align-items: center;
+        flex: 0 0 36px;
+        gap: 0;
+        border-radius: 50% !important;
+        box-sizing: border-box;
+        font-size: 11px;
+      }
+      
+      /* Hide text on mobile */
+      .btn-group .btn-modern span,
+      .btn-group .btn-gallery span,
+      .btn-group .btn-whatsapp span,
+      .btn-group .btn-quiz span,
+      .btn-group .btn-exam span {
+        display: none;
+      }
+      
+      /* Consistent icon sizing */
+      .btn-group .btn-modern i,
+      .btn-group .btn-gallery i,
+      .btn-group .btn-whatsapp i,
+      .btn-group .btn-quiz i,
+      .btn-group .btn-exam i {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1;
+      }
+      
+      /* Special: Add Code icon slightly larger */
+      .btn-group .btn-add i {
+        font-size: 17px;
+      }
+      
+      /* Language combo box - now in the same line */
+      .btn-group .combo-select {
+        flex: 0 1 auto;
+        min-width: 0;
+        width: auto;
+        max-width: 100px;
+        padding: 4px 24px 4px 10px;
+        font-size: 11px;
+        background-position: right 8px center;
+        background-size: 12px;
+        border-radius: 20px;
+        height: 36px;
+        border: 1px solid #d0ddee;
+        background-color: white;
+        color: #0f2b5c;
+        font-weight: 600;
+      }
+      
+      /* Gallery inside the same line - circular matching others */
+      .btn-group .btn-gallery {
+        padding: 0 !important;
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        min-height: 36px;
+        gap: 0;
+        justify-content: center;
+        align-items: center;
+        flex: 0 0 36px;
+        border-radius: 50% !important;
+        box-sizing: border-box;
+      }
+      
+      .btn-group .btn-gallery span {
+        display: none !important;
+      }
+      
+      .btn-group .btn-gallery i {
+        font-size: 15px !important;
+        margin: 0 !important;
+        line-height: 1;
+      }
+      
+      /* Hide the old filter-group on mobile - we moved combo into btn-group */
       .filter-group {
-        flex-direction: column;
-        width: 100%;
+        display: none;
       }
-      .filter-group .combo-select,
-      .filter-group .btn-gallery {
-        width: 100%;
-      }
+      
+      /* Search wrapper - no sticky */
       .search-wrapper {
         flex: 1 1 100%;
         min-width: 120px;
+        position: relative;
+        top: auto;
+        z-index: auto;
+        background: transparent;
+        padding: 0;
+        border-radius: 0;
+        margin: 0;
       }
+      
       .datetime-pill {
         font-size: 13px;
         padding: 8px 14px;
@@ -768,10 +903,71 @@
       .whatsapp-popup .wa-qr-container #qrcode canvas {
         max-width: 120px;
       }
-      /* Responsive buttons */
-      .btn-quiz, .btn-exam {
-        width: 100%;
-        justify-content: center;
+      
+      /* Back to top button - smaller on mobile */
+      .back-to-top {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+        bottom: 20px;
+        right: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      /* Extra small screens - even smaller */
+      .btn-group .btn-modern,
+      .btn-group .btn-gallery,
+      .btn-group .btn-whatsapp,
+      .btn-group .btn-quiz,
+      .btn-group .btn-exam {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        flex: 0 0 32px;
+      }
+      .btn-group .btn-modern i,
+      .btn-group .btn-gallery i,
+      .btn-group .btn-whatsapp i,
+      .btn-group .btn-quiz i,
+      .btn-group .btn-exam i {
+        font-size: 13px;
+      }
+      .btn-group .btn-add i {
+        font-size: 15px;
+      }
+      
+      .btn-group .combo-select {
+        max-width: 80px;
+        padding: 3px 20px 3px 8px;
+        font-size: 10px;
+        height: 32px;
+        background-position: right 6px center;
+        background-size: 10px;
+      }
+      
+      .btn-group {
+        gap: 4px;
+        padding: 2px 0;
+      }
+      
+      .back-to-top {
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+        bottom: 16px;
+        right: 12px;
+      }
+    }
+
+    /* Desktop - show filter-group normally, hide combo from btn-group */
+    @media (min-width: 681px) {
+      .btn-group .combo-select {
+        display: none;
+      }
+      .filter-group {
+        display: flex;
       }
     }
 
@@ -788,6 +984,7 @@
 </head>
 <body>
 
+  <!-- APP BAR - NO STICKY -->
   <div class="app-bar">
     <div class="brand">
       <div class="brand-icon"><i class="fas fa-database"></i></div>
@@ -818,46 +1015,76 @@ behavior ="alternate"
 
       <div class="btn-group">
         <!-- Add Code button -->
-        <button class="btn-modern btn-add" id="openAddBtnMobile"><i class="fas fa-plus-circle"></i> Add Code</button>
+        <button class="btn-modern btn-add" id="openAddBtnMobile">
+          <i class="fas fa-plus-circle"></i>
+          <span>Add Code</span>
+        </button>
         
-        <!-- Filter Group: Combo + Gallery button -->
-        <div class="filter-group">
-          <select id="languageComboFilter" class="combo-select">
-            <option value="all">🌐 All Language</option>
-            <option value="Excel">📊 MS Excel</option>
-            <option value="Tally">📒 Tally Prime</option>
-            <option value="Zoho Book">📘 Zoho Book</option>
-            <option value="VB6">⚡ Visual Studio</option>
-            <option value="HTML">🌍 HTML</option>
-            <option value="JavaScript">🟨 Java Script</option>
-            <option value="SQL">🗄️ SQL</option>
-            <option value="MS Word">📄 MS Word</option>
-            <option value="Other">📌 Other</option>
-          </select>
-
-          <!-- Gallery Button -->
-          <a href="https://sayyidkcst.github.io/kcstcodebank/gallery.html" target="_blank" class="btn-gallery" id="galleryBtn">
-            <i class="fas fa-images"></i> View Image Gallery
-          </a>
-        </div>
-
         <!-- WhatsApp Button -->
         <button class="btn-whatsapp" id="whatsappBtn">
-          <i class="fab fa-whatsapp"></i> WhatsApp
+          <i class="fab fa-whatsapp"></i>
+          <span>WhatsApp</span>
         </button>
         
         <!-- ACCOUNTING QUIZ BUTTON -->
         <a href="https://sites.google.com/view/kcst-service/accounting-quiz" target="_blank" class="btn-quiz">
-          <i class="fas fa-puzzle-piece"></i> Accounting Quiz
+          <i class="fas fa-puzzle-piece"></i>
+          <span>Accounting Quiz</span>
         </a>
 
-        <!-- NEW: REPEATED EXAM QUESTIONS BUTTON -->
-        <a href="https://sayyidkcst.github.io/exam/" target="_blank" class="btn-exam">
-          <i class="fas fa-book-open"></i> Repeated Exam Questions
+        <!-- REPEATED EXAM QUESTIONS BUTTON -->
+        <a href="https://sites.google.com/view/kcst-service/exam" target="_blank" class="btn-exam">
+          <i class="fas fa-book-open"></i>
+          <span>Repeated Exam Questions</span>
+        </a>
+
+        <!-- Language Combo Box - now in the same line on mobile -->
+        <select id="languageComboFilter" class="combo-select">
+          <option value="all">🌐 All</option>
+          <option value="Excel">📊 Excel</option>
+          <option value="Tally">📒 Tally</option>
+          <option value="Zoho Book">📘 Zoho</option>
+          <option value="VB6">⚡ VB6</option>
+          <option value="HTML">🌍 HTML</option>
+          <option value="JavaScript">🟨 JS</option>
+          <option value="SQL">🗄️ SQL</option>
+          <option value="MS Word">📄 Word</option>
+          <option value="Other">📌 Other</option>
+        </select>
+
+        <!-- Gallery Button -->
+        <a href="https://sayyidkcst.github.io/kcstcodebank/gallery.html" target="_blank" class="btn-gallery" id="galleryBtn">
+          <i class="fas fa-images"></i>
+          <span>Gallery</span>
         </a>
 
         <!-- Refresh button -->
-        <button class="btn-modern btn-refresh" id="refreshListBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+        <button class="btn-modern btn-refresh" id="refreshListBtn">
+          <i class="fas fa-sync-alt"></i>
+          <span>Refresh</span>
+        </button>
+      </div>
+      
+      <!-- Filter Group (Desktop only - hidden on mobile) -->
+      <div class="filter-group">
+        <select id="languageComboFilterDesktop" class="combo-select">
+          <option value="all">🌐 All Language</option>
+          <option value="Excel">📊 MS Excel</option>
+          <option value="Tally">📒 Tally Prime</option>
+          <option value="Zoho Book">📘 Zoho Book</option>
+          <option value="VB6">⚡ Visual Studio</option>
+          <option value="HTML">🌍 HTML</option>
+          <option value="JavaScript">🟨 Java Script</option>
+          <option value="SQL">🗄️ SQL</option>
+          <option value="MS Word">📄 MS Word</option>
+          <option value="Other">📌 Other</option>
+        </select>
+
+        <!-- Gallery Button (Desktop) -->
+        <a href="https://sayyidkcst.github.io/kcstcodebank/gallery.html" target="_blank" class="btn-gallery" id="galleryBtnDesktop">
+          <i class="fas fa-images"></i>
+          <span>View Image Gallery</span>
+        </a>
       </div>
     </div>
 
@@ -869,6 +1096,11 @@ behavior ="alternate"
       </div>
     </div>
   </div>
+
+  <!-- ========== BACK TO TOP BUTTON ========== -->
+  <button id="backToTopBtn" class="back-to-top" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
 
   <!-- ADD MODAL -->
   <div id="addModalGlass" class="modal-glass">
@@ -1016,8 +1248,27 @@ behavior ="alternate"
 
     const toastDiv = document.getElementById("globalToast");
 
-    const languageCombo = document.getElementById("languageComboFilter");
+    const languageComboMobile = document.getElementById("languageComboFilter");
+    const languageComboDesktop = document.getElementById("languageComboFilterDesktop");
     const datetimeDisplay = document.getElementById("currentDateTime");
+
+    // ---- BACK TO TOP BUTTON ----
+    const backToTopBtn = document.getElementById("backToTopBtn");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 300) {
+        backToTopBtn.classList.add("visible");
+      } else {
+        backToTopBtn.classList.remove("visible");
+      }
+    });
+
+    backToTopBtn.addEventListener("click", () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
 
     // ---- WHATSAPP BUTTON LOGIC (with QR code) ----
     const whatsappBtn = document.getElementById("whatsappBtn");
@@ -1030,52 +1281,36 @@ behavior ="alternate"
 
     // Function to generate QR code
     function generateQRCode() {
-      // Clear previous QR code
       qrContainer.innerHTML = '';
-      
-      // WhatsApp URL for the number
       const waUrl = `https://wa.me/${phoneNumber}`;
-      
-      // Generate new QR code
       qrCodeInstance = new QRCode(qrContainer, {
         text: waUrl,
         width: 160,
         height: 160,
         colorDark: "#075e54",
         colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction for better scanning
+        correctLevel: QRCode.CorrectLevel.H
       });
     }
 
     whatsappBtn.addEventListener("click", () => {
       const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
-      
       if (isMobile) {
-        // Open WhatsApp directly on mobile
         window.open(`https://wa.me/${phoneNumber}`, '_blank');
       } else {
-        // Show beautiful popup with QR code on desktop
         waPopup.style.display = "flex";
-        // Generate QR code when popup opens
         setTimeout(generateQRCode, 100);
       }
     });
 
-    // Close WhatsApp popup
-    closeWaPopup.addEventListener("click", () => {
-      waPopup.style.display = "none";
-    });
-    waPopup.addEventListener("click", (e) => {
-      if (e.target === waPopup) waPopup.style.display = "none";
-    });
+    closeWaPopup.addEventListener("click", () => { waPopup.style.display = "none"; });
+    waPopup.addEventListener("click", (e) => { if (e.target === waPopup) waPopup.style.display = "none"; });
 
-    // Copy number from WhatsApp popup
     copyWaBtn.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(`+91 ${phoneNumber}`);
         showToast("WhatsApp number copied!");
       } catch (e) {
-        // fallback
         const text = `+91 ${phoneNumber}`;
         const textarea = document.createElement('textarea');
         textarea.value = text;
@@ -1087,7 +1322,6 @@ behavior ="alternate"
       }
     });
 
-    // helper toast
     function showToast(msg, isError = false) {
       toastDiv.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${msg}`;
       toastDiv.classList.add("show");
@@ -1273,26 +1507,38 @@ behavior ="alternate"
     openAddBtn.addEventListener("click", () => { addModal.style.display = "flex"; });
     closeAdd.addEventListener("click", () => { addModal.style.display = "none"; });
 
-    // Refresh button - clears filters + search
     function clearAllFilters() {
       if (searchInput) {
         searchInput.value = "";
         searchTerm = "";
       }
-      if (languageCombo) {
-        languageCombo.value = "all";
-        currentFilterLang = "all";
+      if (languageComboMobile) {
+        languageComboMobile.value = "all";
       }
+      if (languageComboDesktop) {
+        languageComboDesktop.value = "all";
+      }
+      currentFilterLang = "all";
       renderCards();
       showToast("Filters cleared · showing all languages");
     }
 
     refreshBtn.addEventListener("click", clearAllFilters);
 
-    // Combo box change event
-    languageCombo.addEventListener("change", (e) => {
-      currentFilterLang = e.target.value;
+    // Sync both combo boxes
+    function updateLanguageFilter(value) {
+      currentFilterLang = value;
+      if (languageComboMobile) languageComboMobile.value = value;
+      if (languageComboDesktop) languageComboDesktop.value = value;
       renderCards();
+    }
+
+    languageComboMobile.addEventListener("change", (e) => {
+      updateLanguageFilter(e.target.value);
+    });
+
+    languageComboDesktop.addEventListener("change", (e) => {
+      updateLanguageFilter(e.target.value);
     });
 
     searchInput.addEventListener("input", (e) => { searchTerm = e.target.value;
