@@ -54,7 +54,7 @@
       padding-bottom: 32px;
     }
 
-    /* modern app bar - NO STICKY */
+    /* app bar */
     .app-bar {
       background: var(--gradient-primary);
       backdrop-filter: blur(2px);
@@ -64,9 +64,6 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      /* position: sticky; REMOVED */
-      /* top: 0; REMOVED */
-      /* z-index: 110; REMOVED */
       box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
     }
 
@@ -162,27 +159,35 @@
       padding: 16px 20px;
       margin-bottom: 24px;
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+      flex-direction: column;
+      gap: 12px;
       border: 1px solid rgba(255, 255, 255, 0.7);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
     }
 
-    .greeting {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      color: #1e3a6b;
+    /* MARQUEE - separate row */
+    .marquee-row {
+      width: 100%;
+      text-align: center;
     }
 
+    .marquee-row h1 {
+      font-size: 34px;
+      font-weight: 700;
+      color: #0f2b5c;
+    }
+
+    .marquee-row h1 span {
+      font-size: 34px;
+    }
+
+    /* BUTTONS - separate row */
     .btn-group {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
       align-items: center;
+      width: 100%;
     }
 
     .btn-modern {
@@ -213,41 +218,6 @@
 
     .btn-refresh {
       background: var(--gradient-refresh);
-    }
-
-    /* =========== COMBOBOX & GALLERY BUTTON (now in action panel) ========== */
-    .filter-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .combo-select {
-      width: 160px;
-      min-width: 120px;
-      padding: 10px 16px;
-      border-radius: 60px;
-      background: white;
-      border: 1px solid #e2edf7;
-      font-size: 13px;
-      font-weight: 600;
-      color: #0f2b5c;
-      appearance: none;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%232c7be5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-      transition: all 0.2s;
-      font-family: 'Inter', system-ui;
-      flex-shrink: 0;
-    }
-
-    .combo-select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.2);
     }
 
     /* Gallery button */
@@ -380,6 +350,34 @@
 
     .btn-exam i {
       font-size: 14px;
+    }
+
+    /* ========== COMBOBOX ========== */
+    .combo-select {
+      width: 160px;
+      min-width: 120px;
+      padding: 10px 16px;
+      border-radius: 60px;
+      background: white;
+      border: 1px solid #e2edf7;
+      font-size: 13px;
+      font-weight: 600;
+      color: #0f2b5c;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%232c7be5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      transition: all 0.2s;
+      font-family: 'Inter', system-ui;
+      flex-shrink: 0;
+    }
+
+    .combo-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.2);
     }
 
     /* ============== GRID LAYOUT (DESKTOP & RESPONSIVE) ============= */
@@ -743,7 +741,7 @@
       transform: scale(0.92);
     }
 
-    /* ========== RESPONSIVE: ALL IN ONE LINE ========== */
+    /* ========== RESPONSIVE ========== */
     @media (max-width: 680px) {
       .codes-grid {
         grid-template-columns: 1fr;
@@ -756,12 +754,16 @@
       .modal-card {
         padding: 20px;
       }
-      .action-panel {
-        flex-direction: column;
-        align-items: stretch;
+      
+      /* MARQUEE - smaller on mobile */
+      .marquee-row h1 {
+        font-size: 24px;
+      }
+      .marquee-row h1 span {
+        font-size: 24px;
       }
       
-      /* EVERYTHING in ONE LINE - buttons + combo + gallery */
+      /* BUTTONS in ONE LINE - all controls */
       .btn-group {
         display: flex;
         flex-direction: row;
@@ -820,7 +822,7 @@
         font-size: 17px;
       }
       
-      /* Language combo box - now in the same line */
+      /* Language combo box - in the same line */
       .btn-group .combo-select {
         flex: 0 1 auto;
         min-width: 0;
@@ -863,12 +865,6 @@
         line-height: 1;
       }
       
-      /* Hide the old filter-group on mobile - we moved combo into btn-group */
-      .filter-group {
-        display: none;
-      }
-      
-      /* Search wrapper - no sticky */
       .search-wrapper {
         flex: 1 1 100%;
         min-width: 120px;
@@ -961,13 +957,85 @@
       }
     }
 
-    /* Desktop - show filter-group normally, hide combo from btn-group */
+    /* ========== DESKTOP VIEW ========== */
     @media (min-width: 681px) {
-      .btn-group .combo-select {
-        display: none;
+      /* Desktop: Action panel as column (marquee on top, buttons below) */
+      .action-panel {
+        flex-direction: column;
+        gap: 12px;
       }
-      .filter-group {
+      
+      /* Marquee full width */
+      .marquee-row {
+        width: 100%;
+        text-align: center;
+      }
+      
+      /* Buttons in one line */
+      .btn-group {
         display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+      }
+      
+      /* All buttons with text on desktop */
+      .btn-group .btn-modern,
+      .btn-group .btn-gallery,
+      .btn-group .btn-whatsapp,
+      .btn-group .btn-quiz,
+      .btn-group .btn-exam {
+        padding: 8px 16px;
+        width: auto;
+        height: auto;
+        min-width: auto;
+        min-height: auto;
+        flex: 0 0 auto;
+        border-radius: 60px !important;
+        gap: 8px;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+      
+      /* Show text on desktop */
+      .btn-group .btn-modern span,
+      .btn-group .btn-gallery span,
+      .btn-group .btn-whatsapp span,
+      .btn-group .btn-quiz span,
+      .btn-group .btn-exam span {
+        display: inline !important;
+      }
+      
+      /* Icon sizing on desktop */
+      .btn-group .btn-modern i,
+      .btn-group .btn-gallery i,
+      .btn-group .btn-whatsapp i,
+      .btn-group .btn-quiz i,
+      .btn-group .btn-exam i {
+        font-size: 14px;
+        margin: 0;
+      }
+      
+      .btn-group .btn-add i {
+        font-size: 16px;
+      }
+      
+      /* Language combo box in the same line */
+      .btn-group .combo-select {
+        display: inline-flex !important;
+        flex: 0 0 auto;
+        width: 600px;
+        min-width: 100px;
+        max-width: 160px;
+        padding: 8px 14px 8px 16px;
+        font-size: 12px;
+        height: 38px;
+        border-radius: 60px;
+        background-position: right 12px center;
+        background-size: 14px;
       }
     }
 
@@ -984,7 +1052,7 @@
 </head>
 <body>
 
-  <!-- APP BAR - NO STICKY -->
+  <!-- APP BAR -->
   <div class="app-bar">
     <div class="brand">
       <div class="brand-icon"><i class="fas fa-database"></i></div>
@@ -1002,18 +1070,32 @@
 
   <div class="main-container">
     <div class="action-panel">
-      <div class="greeting">
- 
-      </div>
-
-<marquee
-behavior ="alternate"
->
-<h1><span style="font-size: 34px;"><b>KCST Media Technology</b></span></h1>
-<br>
-</marquee>
-
+      
+      <!-- ========== MARQUEE ROW ========== -->
+      <div class="marquee-row">
+        <marquee behavior="alternate">
+          <h1><span style="font-size: 34px;"><b>KCST Media Technology</b></span></h1>
+        </marquee>
+      </div> 
+     
+      <!-- ========== BUTTONS ROW ========== -->
       <div class="btn-group">
+
+        <!-- Language Combo Box -->
+        <select id="languageComboFilter" class="combo-select">
+          <option value="all">🌐 All Language</option>
+          <option value="Excel">📊 MS Excel</option>
+          <option value="Tally">📒 Tally Prime</option>
+          <option value="Zoho Book">📘 Zoho Book</option>
+          <option value="VB6">⚡ Visual Studio</option>
+          <option value="HTML">🌍 HTML</option>
+          <option value="JavaScript">🟨 Java Script</option>
+          <option value="SQL">🗄️ SQL</option>
+          <option value="MS Word">📄 MS Word</option>
+          <option value="Other">📌 Other</option>
+        </select>
+
+
         <!-- Add Code button -->
         <button class="btn-modern btn-add" id="openAddBtnMobile">
           <i class="fas fa-plus-circle"></i>
@@ -1038,24 +1120,10 @@ behavior ="alternate"
           <span>Repeated Exam Questions</span>
         </a>
 
-        <!-- Language Combo Box - now in the same line on mobile -->
-        <select id="languageComboFilter" class="combo-select">
-          <option value="all">🌐 All</option>
-          <option value="Excel">📊 Excel</option>
-          <option value="Tally">📒 Tally</option>
-          <option value="Zoho Book">📘 Zoho</option>
-          <option value="VB6">⚡ VB6</option>
-          <option value="HTML">🌍 HTML</option>
-          <option value="JavaScript">🟨 JS</option>
-          <option value="SQL">🗄️ SQL</option>
-          <option value="MS Word">📄 Word</option>
-          <option value="Other">📌 Other</option>
-        </select>
-
         <!-- Gallery Button -->
         <a href="https://sayyidkcst.github.io/kcstcodebank/gallery.html" target="_blank" class="btn-gallery" id="galleryBtn">
           <i class="fas fa-images"></i>
-          <span>Gallery</span>
+          <span>View Image Gallery</span>
         </a>
 
         <!-- Refresh button -->
@@ -1065,27 +1133,6 @@ behavior ="alternate"
         </button>
       </div>
       
-      <!-- Filter Group (Desktop only - hidden on mobile) -->
-      <div class="filter-group">
-        <select id="languageComboFilterDesktop" class="combo-select">
-          <option value="all">🌐 All Language</option>
-          <option value="Excel">📊 MS Excel</option>
-          <option value="Tally">📒 Tally Prime</option>
-          <option value="Zoho Book">📘 Zoho Book</option>
-          <option value="VB6">⚡ Visual Studio</option>
-          <option value="HTML">🌍 HTML</option>
-          <option value="JavaScript">🟨 Java Script</option>
-          <option value="SQL">🗄️ SQL</option>
-          <option value="MS Word">📄 MS Word</option>
-          <option value="Other">📌 Other</option>
-        </select>
-
-        <!-- Gallery Button (Desktop) -->
-        <a href="https://sayyidkcst.github.io/kcstcodebank/gallery.html" target="_blank" class="btn-gallery" id="galleryBtnDesktop">
-          <i class="fas fa-images"></i>
-          <span>View Image Gallery</span>
-        </a>
-      </div>
     </div>
 
     <!-- code cards grid -->
@@ -1248,8 +1295,7 @@ behavior ="alternate"
 
     const toastDiv = document.getElementById("globalToast");
 
-    const languageComboMobile = document.getElementById("languageComboFilter");
-    const languageComboDesktop = document.getElementById("languageComboFilterDesktop");
+    const languageCombo = document.getElementById("languageComboFilter");
     const datetimeDisplay = document.getElementById("currentDateTime");
 
     // ---- BACK TO TOP BUTTON ----
@@ -1279,7 +1325,6 @@ behavior ="alternate"
     const phoneNumber = "9633315177";
     let qrCodeInstance = null;
 
-    // Function to generate QR code
     function generateQRCode() {
       qrContainer.innerHTML = '';
       const waUrl = `https://wa.me/${phoneNumber}`;
@@ -1512,11 +1557,8 @@ behavior ="alternate"
         searchInput.value = "";
         searchTerm = "";
       }
-      if (languageComboMobile) {
-        languageComboMobile.value = "all";
-      }
-      if (languageComboDesktop) {
-        languageComboDesktop.value = "all";
+      if (languageCombo) {
+        languageCombo.value = "all";
       }
       currentFilterLang = "all";
       renderCards();
@@ -1525,20 +1567,9 @@ behavior ="alternate"
 
     refreshBtn.addEventListener("click", clearAllFilters);
 
-    // Sync both combo boxes
-    function updateLanguageFilter(value) {
-      currentFilterLang = value;
-      if (languageComboMobile) languageComboMobile.value = value;
-      if (languageComboDesktop) languageComboDesktop.value = value;
+    languageCombo.addEventListener("change", (e) => {
+      currentFilterLang = e.target.value;
       renderCards();
-    }
-
-    languageComboMobile.addEventListener("change", (e) => {
-      updateLanguageFilter(e.target.value);
-    });
-
-    languageComboDesktop.addEventListener("change", (e) => {
-      updateLanguageFilter(e.target.value);
     });
 
     searchInput.addEventListener("input", (e) => { searchTerm = e.target.value;
